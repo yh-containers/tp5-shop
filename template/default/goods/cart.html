@@ -1,0 +1,155 @@
+{extend name="base"/}
+
+{block name="content"}
+{include file="common/normal_header"/}
+
+<!--广告块-->
+<div class="layui-main layui-main-width main-content cart-info">
+
+    <table>
+        <thead>
+        <tr>
+            <th width="120"><input type="checkbox"/></th>
+            <th width="550">商品</th>
+            <th width="200">数量</th>
+            <th width="180">单价（元）</th>
+            <th width="200">金额</th>
+        </tr>
+
+        </thead>
+        <tbody>
+        {volist name="cart_list" id="cl"}
+        <tr class="merchant-info">
+            <td><input type="checkbox"/></td>
+            <td class="mch-info" colspan="4"><h3>{$cl['merchant_info']['name']}</h3></td>
+        </tr>
+            {volist name="cl['list']" id="vo"}
+            <tr class="goods-info">
+                <td><input type="checkbox"/></td>
+                <td class="info">
+                    <a href="##" class="img"><img src="{:get_image_location($vo['cover_img'])}"/></a>
+                    <div>
+                        <a href="###" class="name">{$vo['name']}</a>
+                        <span href="###" class="name">【{:implode('】 【',$vo['link_one_price']['attr_info_name'])}】</span>
+                    </div>
+
+                </td>
+                <td class="num">
+                    <div class="attr-num">
+                        <input class="reduce" value="-" type="button" onclick="$.common.numberDec($(this).next())">
+                        <input type="tel"  value="{$vo['link_goods_cart']['num']}" data-price="{$vo['link_one_price']['price']}" data-cart_id="{$vo['link_goods_cart']['id']}" data-attr_id="{$vo['link_one_price']['id']}" data-goods_id="{:$vo['id']}" >
+                        <input class="add" value="+" type="button" onclick="$.common.numberInc($(this).prev(),10)" data-max="0">
+                    </div>
+                </td>
+                <td class="price">
+                    ￥{$vo['link_one_price']['price']}
+                </td>
+                <td class="total">
+                    ￥{:$vo['link_one_price']['price']*$vo['link_goods_cart']['num']}
+                </td>
+            </tr>
+            {/volist}
+        {/volist}
+
+
+
+        </tbody>
+        <tfoot>
+        <tr>
+            <td>
+                <input type="checkbox" id="goods-all"/>
+                <label for="goods-all">全选</label>
+            </td>
+            <td colspan="3" class="cart-info">
+                <span>已选择<em>0</em>件商品;总计<em>￥0.00</em></span>
+            </td>
+            <td class="goods-sure"><button class="redirect-order">结算</button></td>
+        </tr>
+        </tfoot>
+    </table>
+
+</div>
+
+
+
+{include file="common/footer"/}
+{/block}
+{block name="script"}
+<script>
+    //监听数据变化
+    $.common.numberListeners.push(function(obj,current_obj){
+        var num = $(obj).val();
+        var price = $(obj).data('price');
+        $(obj).parent().parent().parent().find('.total').text('￥'+num*price)
+    })
+    //监听checkbox问题
+    $.common.numberListeners.push(function(obj,current_obj){
+        var bool = $(obj).parent().parent().parent().find("td:eq(0) input[type='checkbox']").prop('checked')
+        if(bool) {
+            //计算商品购物信息
+            $.common.cartGoodsInfo()
+        }
+    })
+
+    //购物车信息
+    $.common.cartGoodsInfo = function(){
+        //重新计算商品销售信息
+        var total_num = 0;
+        var total_price = 0;
+        $(".cart-info table tbody tr").find('td:eq(0) input:checked').parents('tr').find('td:eq(2)').each(function(index){
+            console.log(index)
+            var num = $(this).find('input:eq(1)').val()-0;
+            var price = $(this).find('input:eq(1)').data('price')-0;
+            total_num += num
+            total_price += num*price
+        })
+
+        $("tfoot .cart-info span em:eq(0)").text(total_num);
+        $("tfoot .cart-info span em:eq(1)").text('￥'+total_price);
+
+    }
+
+    $(function(){
+        $("input[type='checkbox']:first,input[type='checkbox']:last").change(function(){
+            var bool = $(this).prop('checked')
+            $("input[type='checkbox']").prop('checked',bool)
+            //计算商品购物信息
+            $.common.cartGoodsInfo()
+        })
+        //按商户选中
+        $(".cart-info table tbody tr.merchant-info td input[type='checkbox']").change(function(){
+            var bool = $(this).prop('checked')
+            var current_index = $(this).parents('tr').index()
+            var current_class = $(this).parents('tr').attr('class')
+            $('.cart-info table tbody tr:gt('+current_index+')').each(function(index){
+                var item_class = $(this).attr('class')
+                if(item_class == current_class) {
+                    return false;
+                }
+                $(this).find("td input[type='checkbox']").prop('checked',bool)
+            })
+            //计算商品购物信息
+            $.common.cartGoodsInfo()
+        })
+        $(".cart-info table tbody tr.goods-info td input[type='checkbox']").change(function(){
+            //计算商品购物信息
+            $.common.cartGoodsInfo()
+        })
+        //跳转订单预览界面
+        $(".redirect-order").click(function(){
+            var goods = [];
+            $(".cart-info table tbody tr.goods-info").find('td:eq(0) input:checked').parents('tr').find('td:eq(2)').each(function(index){
+                var info = [
+                    $(this).find('input:eq(1)').data('goods_id'),
+                    $(this).find('input:eq(1)').data('attr_id'),
+                    $(this).find('input:eq(1)').val(),
+                ];
+
+                goods.push(info.join('_'))
+            })
+            window.location.href = "{:url('order',[],false,false)}/goods/"+goods.join(',');
+        })
+    })
+
+</script>
+{/block}

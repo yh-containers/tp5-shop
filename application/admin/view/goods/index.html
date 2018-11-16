@@ -1,0 +1,118 @@
+{extend name="base"/}
+<!--上级栏目-->
+{block name="slider_bar"}goods-index{/block}
+<!--面包屑-->
+{block name="breadcrumb"}
+<i class="ace-icon fa fa-home fa-users"></i>
+<li>{:lang('c_goods')}</li>
+<li>{:lang('c_goods_index')}</li>
+{/block}
+
+
+{block name="content"}
+
+
+<!-- div.table-responsive -->
+
+<!-- div.dataTables_borderWrap -->
+<div class="dataTables_wrapper form-inline no-footer">
+    <div class="row">
+        <div class="col-xs-6">
+            <a href="{:url('add')}" class="btn btn-sm btn-primary" type="button">{:c_lang($sys_master,'p_goods_add')}</a>
+        </div>
+        <div class="col-xs-5 text-right">
+
+        </div>
+        <div class="col-xs-1">
+
+        </div>
+    </div>
+    <table id="simple-table" class="table  table-bordered table-hover">
+        <thead>
+        <tr>
+            <th width="80">{:lang('g_td_number')}</th>
+            <th width="120">{:c_lang($sys_master,'p_td_goods_name')}</th>
+            <!--<th width="120">{:c_lang($sys_master,'p_td_goods_label')}</th>-->
+            <th width="120">{:c_lang($sys_master,'p_td_goods_sku')}</th>
+            <th width="120">{:c_lang($sys_master,'p_td_goods_status')}</th>
+            <th width="80">{:lang('g_td_opt')}</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {volist name="list" id="vo"}
+        <tr>
+            <td>{:$vo['id']}</td>
+            <td>{$vo['name']}</td>
+            <td>
+                <div class="action-buttons">
+                    <a href="#" class="green bigger-140 show-details-btn" title="Show Details">
+                        <i class="ace-icon fa fa-angle-double-down"></i>
+                        <span class="sr-only">Details</span>
+                    </a>
+                </div>
+
+            </td>
+            <td>{:$vo::$fields_status[$vo['status']]}</td>
+            <td>
+                <a href="{:url('add',['id'=>$vo['id']])}">{:lang('g_edit')}</a>
+                <a href="javascript:;" class="goods-copy" data-id="{$vo['id']}">{:lang('g_goods_copy')}</a>
+                <a href="javascript:;" onclick="$.common.del(this,'{:url('goodsDel')}',{'id':{:$vo['id']}})" data-id="{$vo['id']}">{:lang('g_del')}</a>
+            </td>
+        </tr>
+        <tr class="detail-row">
+            <td colspan="8">
+                <table class="table  table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <td width="120">商品编码</td>
+                        <td width="120">商品条码</td>
+                        <td width="120">规格</td>
+                        <td width="220">库存</td>
+                        <td width="220">价格</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {volist name="vo['link_price']" id="info"}
+                    <tr>
+                        <td>{$info['code']}</td>
+                        <td>{$info['bar_code']}</td>
+                        <td>{:implode(',',array_column($info['attr_info_ext'],'name'))}</td>
+                        <td><input type="number" name="stock" value="{$info['stock']}" class="width-40"/></td>
+                        <td><input type="number" name="stock" value="{$info['price']}" class="width-40"/></td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+</div>
+{$page|raw}
+{/block}
+
+{block name="script"}
+<script>
+    //And for the first simple table, which doesn't have TableTools or dataTables
+    //select/deselect all rows according to table header checkbox
+    $('.show-details-btn').on('click', function(e) {
+        e.preventDefault();
+        $(this).closest('tr').next().toggleClass('open');
+        $(this).find(ace.vars['.icon']).toggleClass('fa-angle-double-down').toggleClass('fa-angle-double-up');
+    });
+
+    $(".goods-copy").click(function(){
+        var id = $(this).data('id');
+        layer.confirm("{:c_lang($sys_master, 'p_t_goods_copy')}",function(){
+            $.post("{:url('goodsCopy')}",{id:id},function(result){
+                layer.msg(result.msg)
+                if(result.code==1){
+                    setTimeout(function(){window.location.reload()},1000)
+                }
+            })
+        })
+    })
+</script>
+{/block}

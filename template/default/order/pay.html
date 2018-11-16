@@ -1,0 +1,38 @@
+{extend name="base"/}
+
+{block name="content"}
+{include file="common/normal_header" step="2"/}
+
+<!--广告块-->
+<div class="layui-main layui-main-width main-content ">
+    <div class="pay-info">
+        <div class="order-info">
+            <div class="tip">订单提交成功，请尽快付款。订单编号： <em>{$pay_info['no']}</em></div>
+            <div class="money">金额： <em class="money">￥{$pay_info['money']}</em></div>
+        </div>
+        <div class="pay-style">
+            微信支付
+        </div>
+        <div class="pay-code">
+            <div class="qr-code">
+                <img src="{:url('Index/qrcode',['content'=>$code_url])}" alt=""/>
+            </div>
+            <div class="tip-msg">
+                请使用 <em>微信</em> 扫一扫
+                <br>
+                扫描二维码支付
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+{include file="common/footer"/}
+{/block}
+{block name="script"}
+<script>
+
+</script>
+{/block}

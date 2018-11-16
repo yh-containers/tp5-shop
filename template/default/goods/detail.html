@@ -1,0 +1,246 @@
+{extend name="base"/}
+
+{block name="content"}
+{include file="common/header"/}
+
+<!--广告块-->
+<div class="layui-main layui-main-width main-content">
+
+
+    <!--产品 详情-->
+    <div class="goods-detail">
+        <div class="goods-img">
+            <div class="img">
+                <img src="{:get_image_location($goods_info['cover_img'])}" alt="{$goods_info['name']}">
+            </div>
+        </div>
+        <div class="goods-info">
+            <div class="goods-name">{$goods_info['name']}</div>
+            <div class="sold-info">
+                <div class="info">
+                    <span class="ship">商城价</span>
+                    <em class="price">￥0.00</em>
+
+                </div>
+                <div class="num">
+                    <em class="view-num">0</em>
+                    <em class="sold-num">0</em>
+                </div>
+            </div>
+            <div class="info-item">
+                {volist name="property" id="vo"}
+                <div class="item">
+                    <div class="ship">{$vo['name']}</div>
+                    <div class="content">
+                        <ul>
+                            {volist name="vo['data']"  id="prop"}
+                            <li class="" data-attr_id="{$prop['id']}"><a href="##"  ><b></b>{$prop['name']}</a></li>
+                            {/volist}
+
+                        </ul>
+                    </div>
+                </div>
+                {/volist}
+                <div class="item">
+                    <div class="ship">数量</div>
+                    <div class="content">
+                        <div class="amount-warp">
+                            <input class="text buy-num" value="1" name="number">
+                            <div class="a-btn">
+                                <a href="javascript:void(0)" onclick="$.common.numberInc($(this).parent().prev(),10)" class="btn-add"><i class="layui-icon layui-icon-up"></i></a>
+                                <a href="javascript:void(0);" onclick="$.common.numberDec($(this).parent().prev())"  class="btn-reduce btn-disabled"><i class="layui-icon layui-icon-down"></i></a>
+                            </div>
+                            <input name="confirm_type" id="confirm_type" type="hidden" value="3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="goods-btn">
+                <button type="button" class="buy">立即购买</button>
+                <button type="button" class="cart" id="add-cart"><i class="layui-icon layui-icon-cart"></i>加入购物车</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="goods-coll">
+        <a href="##" class="coll-btn"><i class="layui-icon layui-icon-rate"></i>  <em>收藏</em></a>
+        <a href="##" class="share-btn"><i class="layui-icon layui-icon-share"></i>  <em>分享</em></a>
+    </div>
+    <div class="goods-other">
+        <div class="goods-hot">
+            <div class="title">
+                热门推荐
+            </div>
+            <ul class="list">
+                <li>
+                    <a href="###">
+                        <img src="/static/images/s-02.png" alt="">
+                        <p class="name">xxxxxxxxxxxxxxxxx</p>
+                        <p class="price"><i>￥</i><em>199.99</em></p>
+                    </a>
+                </li>
+                <li>
+                    <a href="###">
+                        <img src="#" alt="">
+                        <p class="name">xxxxxxxxxxxxxxxxx</p>
+                        <p class="price"><i>￥</i><em>199.99</em></p>
+                    </a>
+                </li>
+                <li>
+                    <a href="###">
+                        <img src="#" alt="">
+                        <p class="name">xxxxxxxxxxxxxxxxx</p>
+                        <p class="price"><i>￥</i><em>199.99</em></p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="goods-detail">
+            <div class="layui-tab ">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">商品详情</li>
+                    <li>规格参数</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">内容1</div>
+                    <div class="layui-tab-item">内容2</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{include file="common/footer"/}
+{/block}
+{block name="script"}
+<script>
+
+    //属性集合
+    var goods_attr = '{:json_encode($goods_info["link_price"],true)}';
+    goods_attr = JSON.parse(goods_attr)
+
+    var goods_info = {
+        data:[]
+        //商品选择的属性信息
+        ,stock_attr_data:{}
+        //初始化页面元素特效
+        ,first_effect:true
+        //初始化商品数据
+        ,initData:function(data) {
+            // this.data = data;
+
+            this.data = data;
+
+        }
+        //选择商品属性
+        ,chooseAttr:function(index){
+            var group = '';
+            if(index) {
+
+            }else {
+                var attr=[];
+                $(".info-item ul li.active").each(function(index){
+                    attr.push($(this).data('attr_id'))
+                })
+                attr = attr.sort()
+                group = attr.join('|')
+            }
+            if(!!index || group.length>0) {
+                for(var i=0;i<this.data.length;i++) {
+                    if (!!index) {
+                        console.log(123)
+                        if(this.data[i].id==index) {
+                            this.stock_attr_data = this.data[i]
+                            break;
+                        }
+                    } else if(group.length>0) {
+                        console.log(group)
+                        var attr_group = [];
+                        attr_group = this.data[i].attr_info.sort()
+                        attr_group = attr_group.join('|')
+
+                        if(attr_group == group) {
+                            this.stock_attr_data = this.data[i]
+                            break;
+                        }
+                    }
+                }
+            }else {
+                this.stock_attr_data = this.data[0]
+            }
+
+
+            this.showAttr()
+            //初次选择显示属性选中效果
+            if(this.first_effect){
+                this.elementChooseEffect()
+                this.first_effect = false;
+            }
+        }
+        //显示商品信息
+        ,showAttr:function(){
+
+            //处理价格
+            $(".sold-info .info .price").text('￥'+this.stock_attr_data.price)
+        }
+        //改变属性选中效果
+        ,elementChooseEffect:function(){
+            this.stock_attr_data.attr_info.map(function(value,index){
+                $(".info-item ul [data-attr_id='"+value+"']").addClass('active')
+            })
+        }
+    }
+    //初始化数据
+    goods_info.initData(goods_attr);
+    //显示数据
+    goods_info.chooseAttr()
+
+    //
+
+    // var attr_k_v={};
+    // //选择的属性
+    // var attr_id=0;
+    // //商品选中的属性
+    // var choose_attr_info={};
+    $(function(){
+        $(".info-item ul li a").click(function(){
+            if(!$(this).parent().hasClass('active')) {
+                $(this).parent().parent().find('li.active').removeClass('active')
+                $(this).parent().addClass('active')
+                goods_info.chooseAttr()
+            }
+        })
+
+        $(".goods-info .goods-btn .buy").click(function(){
+            var obj = {}
+            //购买数量
+            obj['buy_num'] = $(".buy-num").val()
+            //选择的属性
+            obj['attr_id']  = goods_info.stock_attr_data.id
+            var param = '';
+            for(key in obj) {
+                param += key+'/'+obj[key]+'/'
+            }
+
+            window.location.href="{:url('goodsRedirect',['gid'=>$goods_info['id']],false,false)}/"+param
+        })
+
+        $("#add-cart").click(function(){
+            var obj = {}
+            //购买数量
+            obj['num'] = $(".buy-num").val()
+            //选择的属性
+            obj['attr_id']  = goods_info.stock_attr_data.id
+
+            $.post("{:url('addCart',['gid'=>$goods_info['id']])}",obj,function(result){
+                alert(result.msg)
+            })
+        })
+
+
+    })
+</script>
+{/block}
