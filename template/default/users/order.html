@@ -1,0 +1,85 @@
+{extend name="./users/base"/}
+
+{block name="slice-content-main"}
+<div class="top-msg">
+    我的订单
+</div>
+<div class="content user-order-list">
+
+    <table class="layui-table" lay-size="sm">
+        <thead>
+        <tr>
+            <td width="300">商品信息</td>
+            <td width="120">单价（元）</td>
+            <td width="80">数量</td>
+            <td width="90">收货人</td>
+            <td width="120">总金额</td>
+            <td width="120">订单状态</td>
+            <td width="120">操作</td>
+        </tr>
+        </thead>
+        <tbody>
+            {volist name="list" id="vo"}
+
+            <tr>
+                <td colspan="7" class="layui-bg-gray">
+                    <div class="order-info">
+                        <div class="order-no">店铺名:<em>{$vo['link_merchant']['name']}</em></div>
+                        <div class="order-no">订单号:<em>{$vo['no']}</em></div>
+                        <div class="order-no">下单时间:<em>{$vo['create_time']}</em></div>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3" class="goods-info">
+                    {volist name="vo['link_goods']" id="item"}
+
+                    <div class="goods-item">
+                        <div class="info">
+                            <img src="{:get_image_location($item['g_img'])}" alt="">
+                            <div>
+                                <div class="name">
+                                    <a href="">{$item['g_name']}</a>
+                                </div>
+                                <div class="attr">
+                                    {:$item['g_attr']}
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="price">
+                            {$item['g_price']}
+                        </div>
+                        <div class="num">
+                            {$item['g_number']}
+                        </div>
+                    </div>
+                    {/volist}
+
+                </td>
+                <td>{$vo['rec_name']}</td>
+                <td>{$vo['total_money']}</td>
+                <td>
+                    <div>{$vo['status']}</div>
+
+                    <div>
+                        <a href="{:url('users/orderDetail',['id'=>$vo['id']])}">订单详情</a>
+                    </div>
+                </td>
+                <td>
+                    xx
+                </td>
+
+            </tr>
+            {/volist}
+        </tbody>
+    </table>
+
+</div>
+{$page|raw}
+
+{/block}
+{block name="script"}
+
+{/block}

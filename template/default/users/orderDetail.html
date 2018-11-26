@@ -1,0 +1,155 @@
+{extend name="./users/base"/}
+<!--背景色-->
+{block name="slice-content-start"}
+{include file="common/header"/}
+{/block}
+
+{block name="slice-content-main"}
+<!--广告块-->
+<div class="layui-main layui-main-width main-content detail-header-body">
+    <div class="layui-card">
+        <div class="layui-card-header card-header ">订单号:{$model['no']}</div>
+        <div class="layui-card-body ">
+
+            <div class="item-block">
+                <div class="item">
+                    <div class="c-l">订单状态：</div>
+                    <div class="c-r">{$model['status']}</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header card-header">订单明细</div>
+        <div class="layui-card-body">
+            <div class="item-block">
+                <h3>收货方信息</h3>
+                <div class="item">
+                    <div class="c-l">收货地址：</div>
+                    <div class="c-r">{$model['province'].' '.$model['city'].' '.$model['area'].' '.$model['addr']}</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">邮编：</div>
+                    <div class="c-r">{$model['rec_code']}</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">收货人：</div>
+                    <div class="c-r">{$model['rec_name']}</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">电话：</div>
+                    <div class="c-r">{$model['rec_phone']}</div>
+                </div>
+            </div>
+            <div class="item-block">
+                <h3>付款信息</h3>
+                <div class="item">
+                    <div class="c-l">付款方式：</div>
+                    <div class="c-r">{$model['pay_id']}</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">商品总额：</div>
+                    <div class="c-r">{$model['total_money']}</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">运费金额：</div>
+                    <div class="c-r">{$model['freight_money']}</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">优惠券抵扣：</div>
+                    <div class="c-r">{$model['dis_money']}</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">应付总额：</div>
+                    <div class="c-r">{$model['pay_money']}</div>
+                </div>
+            </div>
+            <div class="item-block">
+                <h3>发票信息</h3>
+                <div class="item">
+                    <div class="c-l">发票类型：</div>
+                    <div class="c-r">xxxx</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">发票抬头：</div>
+                    <div class="c-r">xxxx</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">发票内容：</div>
+                    <div class="c-r">xxxx</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="layui-card">
+        <div class="layui-card-header card-header ">订单商品清单</div>
+        <div class="layui-card-body ">
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                <tr>
+                    <td width="180">商品信息</td>
+                    <td width="120">价格</td>
+                    <td width="120">数量</td>
+                </tr>
+                </thead>
+                <tbody>
+                {volist name="model['link_goods']" id="vo"}
+                <tr>
+                    <td>
+                        <div class="goods-info">
+                            <img src="{:get_image_location($vo['g_img'])}" alt="">
+                            <div class="info">
+                                <div class="name">
+                                    <a href=""> {$vo['g_name']}</a>
+                                </div>
+                                <div class="attr"> {$vo['g_attr']}</div>
+                            </div>
+                        </div>
+
+                    </td>
+                    <td>￥{$vo['g_price']}</td>
+                    <td>{$vo['g_number']}</td>
+                </tr>
+                {/volist}
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-body ">
+
+            <div class="item-block item-total">
+                <div class="item">
+                    <div class="c-l">商品总额：</div>
+                    <div class="c-r">￥{$model['total_money']}</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">运费金额：</div>
+                    <div class="c-r">￥{$model['freight_money']}</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">优惠券抵扣：</div>
+                    <div class="c-r">￥{$model['dis_money']}</div>
+                </div>
+                <div class="item">
+                    <div class="c-l">应付总额：</div>
+                    <div class="c-r">￥<em class="price">{$model['pay_money']}</em></div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+{/block}
+
+
+{block name="slice-content-end"}
+{include file="common/footer"/}
+{/block}
+

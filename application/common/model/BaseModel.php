@@ -26,14 +26,14 @@ class BaseModel extends Model
             $where[$pk] = $input_data[$pk];
             //更新数据保留数据原始数据
             $model = $model->where($where)->find();
-            if(empty($model))  return ['code'=>0,'msg'=>lang('g_no_find')];
+            if(empty($model))  return ['code'=>0,'msg'=>'未修改字段信息'];
         }
         // 过滤post数组中的非数据表字段数据
         try{
             $bool = $model->allowField(true)->save($input_data);
-            return ['code'=>(int)$bool, 'msg'=>$bool ? lang('g_data_save_success') : lang('g_data_save_error')];
+            return ['code'=>(int)$bool, 'msg'=>$bool ? '保存成功' : '保存失败'];
         } catch (\Exception $e) {
-            return ['code'=>0,'msg'=>lang('g_data_save_error :error', ['error'=>$e->getMessage()])];
+            return ['code'=>0,'msg'=>'保存异常:'.$e->getMessage()];
         }
     }
 
@@ -41,7 +41,7 @@ class BaseModel extends Model
     public function actionDel($where,$is_soft_delete=false)
     {
         $bool = self::destroy($where,$is_soft_delete);
-        return ['code'=>(int)$bool, 'msg'=>$bool ? lang('g_data_del_success') : lang('g_data_del_error')];
+        return ['code'=>(int)$bool, 'msg'=>$bool ? '删除成功' : '删除失败'];
     }
 
 }

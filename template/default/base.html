@@ -8,9 +8,14 @@
     <link rel="stylesheet" href="/static/web/css/reset.css">
     <link rel="stylesheet" href="/static/web/css/index.css">
 </head>
-<body class="layui-layout-body">
+<body class="layui-layout-body  {block name='bg_color_class'}{/block}">
 
 {block name="content"}{/block}
+
+<!--分块处理-->
+{block name="slice-content-start"}{/block}
+{block name="slice-content-main"}{/block}
+{block name="slice-content-end"}{/block}
 
 
 <!-- 你的HTML代码 -->

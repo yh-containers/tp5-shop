@@ -1,3 +1,6 @@
+body.bg-gray{
+    background: #f2f2f2;
+}
 .layui-layout-body{
     overflow: scroll;
 }
@@ -369,7 +372,7 @@
 .footer {
     margin-top: 20px;
     padding: 35px;
-    background: #f2f2f2;
+    background: #fff;
 }
 
 .footer .shop-help {
@@ -959,7 +962,7 @@
     display: flex;
     flex-wrap: wrap;
 }
-.order-info .layui-card .layui-box {
+ .layui-card .layui-box,.user-layui-box {
     width: 210px;
     height: 118px;
     margin: 10px 15px 0 0;
@@ -969,53 +972,53 @@
     padding: 20px 18px 18px 22px;
     cursor:pointer;
 }
-.order-info .layui-card .layui-box a{
+ .layui-card .layui-box a{
     list-style-type: none;
     text-decoration: none;
 }
-.order-info .layui-card .layui-box.active {
+ .layui-card .layui-box.active {
 
     border: 1px solid #cc3341;
 }
-.order-info .layui-card .layui-box.active i{
+ .layui-card .layui-box.active i{
     align-self: flex-end;
     position: absolute;
     color: #cc3341;
 }
-.order-info .layui-card .layui-box:hover {
+ .layui-card .layui-box:hover {
     border: 1px solid #8c8c8c;
 }
 
-.order-info .layui-card .layui-box .name{
+ .layui-card .layui-box .name{
     font-size: 18px;
     color: #555;
     margin-bottom: 10px;
 }
-.order-info .layui-card .layui-box .phone{
+ .layui-card .layui-box .phone{
     margin-bottom: 5px;
 }
-.order-info .layui-card .layui-box .choose-info{
+ .layui-card .layui-box .choose-info{
     text-align: right;
 }
-.order-info .layui-card .layui-box .choose-info a{
+ .layui-card .layui-box .choose-info a{
     color: #dcdcdc;
     margin: 30px 10px 0 0;
     display: inline-block;
 }
-.order-info .layui-card .layui-box .choose-info a:hover{
+ .layui-card .layui-box .choose-info a:hover{
     color: #cc3341;
 }
-.order-info .layui-card .layui-box.add-addr{
+ .layui-card .layui-box.add-addr{
     font-size: 18px;
     align-items: center;
     justify-content: center;
 }
-.order-info .layui-card .layui-box.add-addr a{
+ .layui-card .layui-box.add-addr a{
     font-size: 18px;
     align-items: center;
     justify-content: center;
 }
-.order-info .layui-card .layui-box i{
+ .layui-card .layui-box i{
     font-size: 30px;
 }
 
@@ -1186,3 +1189,272 @@
 .pay-info .pay-code .tip-msg em{
    color: #cc3341;
 }
+
+/*个人中心*/
+.user-container{
+    display: flex;
+
+}
+.user-container>.menu-block{
+    width: 212px;
+    margin-right: 30px;
+    background: #fff;
+    height: min-content;
+}
+.user-container>.content-block{
+    flex: 1;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+}
+
+.user-container>.menu-block ul{
+    list-style-type: none;
+    padding-left: 20px;
+}
+.user-container>.menu-block ul li{
+    list-style-type: none;
+    font-size: 14px;
+    color: #999;
+    padding-top: 10px;
+}
+
+.user-container>.menu-block ul li a{
+    text-decoration: none;
+    color: #999;
+}
+.user-container>.menu-block ul li.item-header{
+    font-size: 16px;
+    color: #666;
+    padding: 12px 12px 12px 0;
+}
+.user-container>.menu-block ul li.item-header a{
+    color: #666;
+}
+
+
+.user-container>.content-block .top-msg{
+    font-size: 16px;
+    color:#666;
+    border-bottom: 1px solid #dcdcdc;
+}
+.user-container>.content-block .layui-laypage-default{
+    text-align: center;
+}
+.user-container>.content-block .layui-laypage-default .layui-laypage-curr em{
+    background: #cc3341;
+}
+.user-container>.content-block .content{
+    padding: 52px 20px 60px 80px;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-container>.content-block .content.user-addr-list{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0;
+}
+.user-container>.content-block .content .item{
+    display: flex;
+    margin-top: 20px;
+    align-items: center;
+}
+.user-container>.content-block .content .item .c-l{
+    flex: 3;
+    text-align: right;
+    font-size: 14px;
+    margin-right: 8px;
+}
+.user-container>.content-block .content .item .c-r{
+    flex: 9;
+}
+.user-container>.content-block .content .item .c-r input{
+    padding: 11px;
+    width: 80%;
+}
+.user-container>.content-block .content .item .c-r select{
+    padding: 11px;
+}
+.user-container>.content-block .foot-block{
+    text-align: center;
+}
+
+.user-container>.content-block .foot-block input[type='button']{
+    padding: 10px 0;
+    width: 150px;
+    background: #cc3341;
+    color: #fff;
+    border: 0 none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+
+.user-container>.content-block .foot-block input[type='button']:hover{
+    background: #cc470f;
+}
+
+/*我的订单*/
+.user-container>.content-block .user-order-list{
+    padding: 10px;
+}
+.user-container>.content-block .user-order-list table{
+
+}
+.user-container>.content-block .user-order-list table tbody .goods-info{
+    padding: 0px;
+}
+.user-container>.content-block .user-order-list table tbody .goods-info .goods-item{
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e6e6e6;
+}
+.user-container>.content-block .user-order-list table tbody .goods-info .goods-item:last-child{
+    border-bottom: none;
+}
+.user-container>.content-block .user-order-list table tbody .goods-info .goods-item div{
+    display: flex;
+
+}
+
+.user-container>.content-block .user-order-list table tbody .goods-info .goods-item .info{
+    flex:300;
+}
+
+.user-container>.content-block .user-order-list table tbody .goods-info .goods-item .info img{
+    width: 70px;
+    height: 70px;
+    margin-right: 3px;
+}
+.user-container>.content-block .user-order-list table tbody .goods-info .goods-item .info>div{
+    flex-direction: column;
+    justify-content: space-between;
+    width: 180px;
+}
+.user-container>.content-block .user-order-list table tbody .goods-info .goods-item .info>div .attr{
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+}
+.user-container>.content-block .user-order-list table tbody .goods-info .goods-item .info>div .name{
+    flex-direction: column;
+    overflow: hidden;
+    height: 45px;
+
+}
+.user-container>.content-block .user-order-list table tbody .goods-info .goods-item .info>div .name a{
+    text-decoration: none;
+    color: #666;
+}
+.user-container>.content-block .user-order-list table tbody .goods-info .goods-item .price{
+    flex: 120;
+}
+.user-container>.content-block .user-order-list table tbody .goods-info .goods-item .num{
+    flex: 80;
+}
+.user-container>.content-block .user-order-list table tbody .order-info{
+    display: flex;
+
+}
+.user-container>.content-block .user-order-list table tbody .order-info>div{
+    margin-right: 20px;
+}
+/*详情块处理*/
+.detail-header-body {
+
+}
+.detail-header-body .layui-card{
+
+}
+.detail-header-body .layui-card .card-header{
+    font-size: 16px;
+    border-bottom: 1px solid #c3c3c3;
+}
+.detail-header-body .layui-card .layui-card-body{
+    color:#666;
+    padding: 15px;
+}
+
+.item-block{
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    border-bottom: 1px solid #dbdbdb;
+}
+.item-block h3{
+    font-size: 14px;
+    font-weight: bold;
+
+}
+.item-block .item {
+    display: flex;
+    flex-direction: row;
+}
+.item-block .item .c-l{
+    width: 80px;
+    text-align: right;
+}
+.item-block .item .c-r{
+    text-align: left;
+    margin-left: 5px;
+}
+
+.item-block.item-total{
+    align-items: flex-end;
+}
+.item-block.item-total .item{
+    margin-bottom: 10px;
+}
+.item-block.item-total .c-r{
+    color: #cc3341;
+    width: 120px;
+
+}
+.item-block.item-total .c-r em.price{
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+.layui-card-body  table tbody .goods-info  {
+    display:flex;
+}
+
+.layui-card-body  table tbody .goods-info img{
+    width: 70px;
+    height: 70px;
+    margin-right: 3px;
+}
+.layui-card-body  table tbody .goods-info .info{
+    max-width: 450px;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+
+}
+.layui-card-body  table tbody .goods-info .info>div{
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.layui-card-body  table tbody .goods-info  .info>div .attr{
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+}
+.layui-card-body  table tbody .goods-info  .info>div .name{
+    flex-direction: column;
+    overflow: hidden;
+    height: 45px;
+
+}
+.layui-card-body  table tbody .goods-info  .info>div .name a{
+    text-decoration: none;
+    color: #666;
+}
+
+
+

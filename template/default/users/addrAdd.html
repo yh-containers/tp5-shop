@@ -1,0 +1,76 @@
+{extend name="./users/base"/}
+
+{block name="slice-content-main"}
+<div class="top-msg">
+    添加收货地址
+</div>
+<form action="" id="form">
+    <input type="hidden" name="id" value="{$model['id']}"/>
+    <div class="content">
+
+        <div class="item">
+            <div class="c-l">
+                姓名
+            </div>
+            <div class="c-r">
+                <input type="text" name="rec_name" value="{$model['rec_name']}" maxlength="25"/>
+            </div>
+        </div>
+        <div class="item">
+            <div class="c-l">
+                手机号码
+            </div>
+            <div class="c-r">
+                <input type="mobile" name="rec_phone" value="{$model['rec_phone']}" maxlength="11"/>
+            </div>
+        </div>
+        <div class="item">
+            <div class="c-l">
+                所在地区
+            </div>
+            <div class="c-r">
+                <div data-toggle="distpicker">
+                    <select name="province" data-province="{:$model['province']?$model['province']:'---- 选择省 ----'}"></select>
+                    <select name="city" data-city="{:$model['city']?$model['city']:'---- 选择市 ----'}"></select>
+                    <select name="area" data-district="{:$model['area']?$model['area']:'---- 选择区 ----'}"></select>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="c-l">
+                详细地址
+            </div>
+            <div class="c-r">
+                <input type="text" name="addr" value="{$model['addr']}" maxlength="100"/>
+            </div>
+        </div>
+        <div class="item">
+            <div class="c-l">
+                邮编
+            </div>
+            <div class="c-r">
+                <input type="text" name="code" value="{$model['code']}" maxlength="100"/>
+            </div>
+        </div>
+    </div>
+    <div class="foot-block">
+        <input type="button" value="保存" id="submit">
+    </div>
+</form>
+
+
+{/block}
+{block name="script"}
+<script src="/static/distpicker/js/distpicker.data.js"></script>
+<script src="/static/distpicker/js/distpicker.js"></script>
+<script src="/static/distpicker/js/main.js"></script>
+<script>
+    $(function(){
+        $("#submit").click(function(){
+            $.post($("#form").attr('action'),$("#form").serialize(),function(result){
+                alert(result.msg)
+            })
+        })
+    })
+</script>
+{/block}

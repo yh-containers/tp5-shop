@@ -1,0 +1,35 @@
+{extend name="base"/}
+<!--背景色-->
+{block name="bg_color_class"}bg-gray{/block}
+{block name="slice-content-start"}
+{include file="common/header"/}
+
+<!--广告块-->
+
+<div class="layui-main layui-main-width main-content user-container">
+        <div class="menu-block">
+            <ul class="menu">
+                <li class="item-header">订单管理</li>
+                <li><a href="{:url('order')}">商品订单</a></li>
+                <li><a href="{:url('addr')}">收货地址</a></li>
+                <li>发票信息</li>
+                <li class="item-header">售后服务</li>
+            </ul>
+        </div>
+        <div class="content-block">
+
+
+
+{/block}
+
+{block name="slice-content-main"}
+
+{/block}
+
+
+{block name="slice-content-end"}
+    </div>
+</div>
+    {include file="common/footer"/}
+{/block}
+

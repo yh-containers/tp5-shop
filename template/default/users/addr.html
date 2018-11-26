@@ -1,0 +1,70 @@
+{extend name="./users/base"/}
+
+{block name="slice-content-main"}
+
+<div class="top-msg">
+    收货信息
+</div>
+<div class="content layui-card user-addr-list">
+    {volist name="list" id="vo"}
+    <div class="layui-box {:$vo['is_default']?'active':''}">
+        {:$vo['is_default']?'<i class="layui-icon layui-icon-ok-circle"></i>':''}
+        <div class="layui-text name">{$vo['rec_name']}</div>
+        <div class="layui-text phone">{$vo['rec_phone']}</div>
+        <div class="layui-text addr">{$vo['province'].' '.$vo['city'].' '.$vo['area'].' '.$vo['addr']}</div>
+        <div class="choose-info">
+            <a href="javascript:;" class="del" data-id="{$vo['id']}">删除</a>
+            <a href="{:url('addrAdd',['id'=>$vo['id']])}" class="modify">修改</a>
+            <a href="javascript:;" class="is_default" data-id="{$vo['id']}">默认地址</a>
+        </div>
+    </div>
+    {/volist}
+
+    <div class="layui-box add-addr">
+        <i class="layui-icon layui-icon-location"></i>
+        <a href="{:url('users/addrAdd')}">添加新地址</a>
+    </div>
+</div>
+
+{/block}
+
+{block name="script"}
+<script src="/static/distpicker/js/distpicker.data.js"></script>
+<script src="/static/distpicker/js/distpicker.js"></script>
+<script src="/static/distpicker/js/main.js"></script>
+<script>
+    $(function(){
+        var layer
+        layui.use(['layer'],function(){
+            layer = layui.layer;
+        })
+        $("#submit").click(function(){
+            $.post($("#form").attr('action'),$("#form").serialize(),function(result){
+                alert(result.msg)
+            })
+        })
+        //删除收货地址
+        $(".del").click(function(){
+            var $this = $(this)
+            var id= $this.data('id')
+
+            layer.confirm("是否删除该数据",function(){
+                $.post("{:url('addrDel')}",{id:id},function(result){
+                    layer.msg(result.msg)
+                    if(result.code==1) {
+                        $this.parent().parent().remove()
+                    }
+                })
+            })
+        })
+        //设置默认地址
+        $(".is_default").click(function(){
+            var $this = $(this)
+            var id= $this.data('id')
+            $.post("{:url('addrDefault')}",{id:id},function(result){
+                window.location.reload()
+            })
+        })
+    })
+</script>
+{/block}

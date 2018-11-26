@@ -230,4 +230,10 @@ class Order extends BaseModel
     {
         return $this->hasOne('OrderInvoice','oid');
     }
+
+    //商户信息
+    public function linkMerchant()
+    {
+        return $this->belongsTo('Merchant','mch_id');
+    }
 }
