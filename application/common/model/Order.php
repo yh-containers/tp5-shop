@@ -74,6 +74,8 @@ class Order extends BaseModel
             return ['退款订单'];
         }elseif($data['status']==2) {
             return ['退货'];
+        }elseif($data['status']==3) {
+            return ['订单已取消'];
         }
 
         $msg = ['创建订单'];
@@ -126,10 +128,15 @@ class Order extends BaseModel
         if ($data['pay_status'] && $data['is_send']==2) {
             array_push($opt_list,'logistics','del');
         }
+        //订单已取消
+        if ($data['status']==3) {
+            $opt_list = ['del'];
+        }
 
         return $opt_list;
 
     }
+
 
 
 
@@ -283,6 +290,84 @@ class Order extends BaseModel
             abort(40002,'创建订单异常'.$e->getMessage());
         }
     }
+
+
+    /*
+     * 订单催单
+     * */
+    public function reminder($user_id,$order_id)
+    {
+        return model('OrderReminder')->save([
+            'uid' => $user_id,
+            'oid' => $order_id,
+            'ip'  => request()->ip()
+        ]);
+    }
+
+    /*
+     * 删除订单
+     * */
+    public function del($order_id,$user_id)
+    {
+        $order_info = $this->find($order_id);
+        if ($order_info['uid']!=$user_id) {
+            return [false,'订单请求异常'];
+        }
+        //判断订单是否可以删除
+        if (!$order_info['pay_status']) {
+            //删除动作
+            $bool = self::destroy($order_id);
+            return [$bool,$bool?'订单已删除':'订单删除失败'];
+        }else{
+            return [false,'订单流程异常，无法进行此操作'];
+        }
+    }
+
+    /*
+     * 删除订单
+     * */
+    public function cancel($order_id,$user_id)
+    {
+        $order_info = $this->find($order_id);
+        if ($order_info['uid']!=$user_id) {
+            return [false,'订单请求异常'];
+        }
+        //判断订单是否可以删除
+        if (!$order_info['pay_status']) {
+            //删除动作
+            $bool = $this->save(['status'=>3,'cancel_time'=>time()],['id'=>$order_id]);
+            return [$bool,$bool?'订单已取消':'订单取消失败'];
+        }else{
+            return [false,'订单流程异常，无法进行此操作'];
+        }
+    }
+
+
+    /*
+     * 删除订单
+     * */
+    public function receive($order_id,$user_id)
+    {
+        $order_info = $this->find($order_id);
+        if ($order_info['uid']!=$user_id) {
+            return [false,'订单请求异常'];
+        }
+        //判断订单是否可以删除
+        if ($order_info['is_send']) {
+            if($order_info['is_send']==1){
+                //删除动作
+                $bool = $this->save(['is_send'=>2,'complete_time'=>time()],['id'=>$order_id]);
+                return [$bool,$bool?'已确认收货':'确认收货异常'];
+            }else{
+                return [true,'您已确认收货'];
+            }
+
+
+        }else{
+            return [false,'订单流程异常，无法进行此操作'];
+        }
+    }
+
 
     //商品
     public function linkGoods()

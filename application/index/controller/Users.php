@@ -95,7 +95,7 @@ class Users extends Common
      * */
     public function orderDetail()
     {
-        $id = $this->request->param('id');
+        $id = $this->request->param('id',0,'intval');
 
         $model = new \app\common\model\Order();
 
@@ -104,5 +104,53 @@ class Users extends Common
         return view('orderDetail',[
             'model' =>$model,
         ]);
+    }
+
+    /*
+     * 订单管理--催单
+     * */
+    public function orderReminder()
+    {
+        $id = $this->request->param('id',0,'intval');
+
+        $model = new \app\common\model\Order();
+        $bool = $model->reminder($this->user_id, $id);
+        return ['code'=>$bool?1:0,'msg'=>$bool?'操作成功':'操作异常'];
+    }
+
+    /*
+     * 订单管理--删除订单
+     * */
+    public function orderDel()
+    {
+        $id = $this->request->param('id',0,'intval');
+
+        $model = new \app\common\model\Order();
+        list($bool,$msg) = $model->del($id,$this->user_id);
+        return ['code'=>(int)$bool,'msg'=>$msg];
+    }
+
+    /*
+     * 订单管理--取消订单
+     * */
+    public function orderCancel()
+    {
+        $id = $this->request->param('id',0,'intval');
+
+        $model = new \app\common\model\Order();
+        list($bool,$msg) = $model->cancel($id,$this->user_id);
+        return ['code'=>(int)$bool,'msg'=>$msg];
+    }
+
+    /*
+     * 订单管理--取消订单
+     * */
+    public function orderReceive()
+    {
+        $id = $this->request->param('id',0,'intval');
+
+        $model = new \app\common\model\Order();
+        list($bool,$msg) = $model->receive($id,$this->user_id);
+        return ['code'=>(int)$bool,'msg'=>$msg];
     }
 }

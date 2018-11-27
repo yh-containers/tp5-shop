@@ -1368,7 +1368,9 @@ body.bg-gray{
 }
 .user-container>.content-block .user-order-list table tbody .opt>a{
     display: block;
+    margin-left: 0;
     margin-bottom: 3px;
+    width: 100%;
 }
 /*详情块处理*/
 .detail-header-body {

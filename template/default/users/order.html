@@ -75,21 +75,22 @@
                     </div>
                 </td>
                 <td class="opt">
+                    {if(in_array('rec_log',$vo['OrderOptBtn']))}
+                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-normal order-receive" data-id="{$vo['id']}" href="javascript:;">确认收货</a>
+                    {/if}
                     {if(in_array('pay',$vo['OrderOptBtn']))}
                         <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-danger" href="{:url('Order/pay',['order_id'=>$vo['id']])}">去付款</a>
                     {/if}
                     {if(in_array('cancel',$vo['OrderOptBtn']))}
-                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-primary order-cancel" data-id="{$vo['id']}" href="{:url('users/orderDetail',['id'=>$vo['id']])}">取消订单</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-primary order-cancel" data-id="{$vo['id']}" href="javascript:;">取消订单</a>
                     {/if}
                     {if(in_array('reminder',$vo['OrderOptBtn']))}
-                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-primary order-reminder" data-id="{$vo['id']}" href="{:url('users/orderDetail',['id'=>$vo['id']])}">催单</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-primary order-reminder" data-id="{$vo['id']}" href="javascript:;">催单</a>
                     {/if}
                     {if(in_array('logistics',$vo['OrderOptBtn']))}
                         <a  href="javascript:;" onclick="alert('开发中')">查看物流</a>
                     {/if}
-                    {if(in_array('rec_log',$vo['OrderOptBtn']))}
-                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-normal order-rec_log" data-id="{$vo['id']}" href="{:url('users/orderDetail',['id'=>$vo['id']])}">确认收货</a>
-                    {/if}
+
 
 
                 </td>
@@ -104,5 +105,66 @@
 
 {/block}
 {block name="script"}
+<script>
+    $(function(){
+        var layer
+        layui.use(['layer'],function(){
+            layer = layui.layer;
+        })
+        //订单催单
+        $(".order-reminder").click(function(){
+            var $this = $(this)
+            var id = $this.data('id')
+            layer.confirm("是否确定催单？",function(){
+                $.post("{:url('users/orderReminder')}",{id:id},function(result){
+                    // $this.remove()
+                    layer.msg(result.msg)
+                })
+            })
+        })
 
+        //删除订单
+        $(".order-del").click(function(){
+            var $this = $(this)
+            var id = $this.data('id')
+            layer.confirm("确定删除订单？",function(){
+                $.post("{:url('users/orderDel')}",{id:id},function(result){
+                    layer.msg(result.msg)
+                    if(result.code==1){
+                        setTimeout(function(){ window.location.reload() },1000)
+                    }
+                })
+            })
+        })
+
+        //删除订单
+        $(".order-cancel").click(function(){
+            var $this = $(this)
+            var id = $this.data('id')
+            layer.confirm("确定取消订单？",function(){
+                $.post("{:url('users/orderCancel')}",{id:id},function(result){
+                    layer.msg(result.msg)
+                    if(result.code==1){
+                        setTimeout(function(){ window.location.reload() },1000)
+                    }
+                })
+            })
+        })
+
+        //确定收货订单
+        $(".order-receive").click(function(){
+            var $this = $(this)
+            var id = $this.data('id')
+            layer.confirm("是否确定收货？",function(){
+                $.post("{:url('users/orderReceive')}",{id:id},function(result){
+                    layer.msg(result.msg)
+                    if(result.code==1){
+                        setTimeout(function(){ window.location.reload() },1000)
+                    }
+                })
+            })
+        })
+    })
+
+</script>
 {/block}
