@@ -111,7 +111,7 @@ class Users extends Common
 //        dump($data_invoice);exit;
         return view('orderDetail',[
             'model' =>$model,
-            
+            'data_invoice' => $data_invoice
         ]);
     }
 

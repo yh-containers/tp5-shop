@@ -67,18 +67,13 @@
             </div>
             <div class="item-block">
                 <h3>发票信息</h3>
+                {volist name="data_invoice" id="vo"}
                 <div class="item">
-                    <div class="c-l">发票类型：</div>
-                    <div class="c-r">xxxx</div>
+                    <div class="c-l">{$vo['name']}：</div>
+                    <div class="c-r">{$vo['value']}</div>
                 </div>
-                <div class="item">
-                    <div class="c-l">发票抬头：</div>
-                    <div class="c-r">xxxx</div>
-                </div>
-                <div class="item">
-                    <div class="c-l">发票内容：</div>
-                    <div class="c-r">xxxx</div>
-                </div>
+                {/volist}
+               
             </div>
 
         </div>
