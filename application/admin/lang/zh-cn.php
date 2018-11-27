@@ -169,20 +169,6 @@ return [
     /*shop end*/
 
     /*订单管理开始*/
-    'c_order'               =>  '订单管理',
-    'c_order_index'         =>  '订单列表',
-    'c_order_detail'        =>  '订单详情',
-
-    'f_order_is_auth_no'    =>  '未审核',
-    'f_order_is_auth_yes'   =>  '已审核',
-    'f_order_is_auth_refund'=>  '审核被拒',
-
-    'f_order_is_pay_no'     =>  '未支付',
-    'f_order_is_pay_yes'    =>  '已支付',
-
-    'f_order_is_send_no'    =>  '未发货',
-    'f_order_is_send_yes'   =>  '已发货',
-
 
 
     /*订单管理结束*/

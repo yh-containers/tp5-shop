@@ -21,13 +21,20 @@
         <tbody>
             {volist name="list" id="vo"}
 
-            <tr>
-                <td colspan="7" class="layui-bg-gray">
+            <tr  class="layui-bg-gray">
+                <td colspan="6">
                     <div class="order-info">
                         <div class="order-no">店铺名:<em>{$vo['link_merchant']['name']}</em></div>
                         <div class="order-no">订单号:<em>{$vo['no']}</em></div>
                         <div class="order-no">下单时间:<em>{$vo['create_time']}</em></div>
+
                     </div>
+
+                </td>
+                <td>
+                    {if(in_array('del',$vo['OrderOptBtn']))}
+                        <a href="javascript:;" class="order-del" data-id="{$vo['id']}"><i class="layui-icon layui-icon-delete"></i></a>
+                    {/if}
                 </td>
             </tr>
 
@@ -40,7 +47,7 @@
                             <img src="{:get_image_location($item['g_img'])}" alt="">
                             <div>
                                 <div class="name">
-                                    <a href="">{$item['g_name']}</a>
+                                    <a href="{:url('goods/detail',['id'=>$item['gid'],'attr_id'=>$item['attr_id']])}">{$item['g_name']}</a>
                                 </div>
                                 <div class="attr">
                                     {:$item['g_attr']}
@@ -61,14 +68,30 @@
                 <td>{$vo['rec_name']}</td>
                 <td>{$vo['total_money']}</td>
                 <td>
-                    <div>{$vo['status']}</div>
+                    <div>{:implode(',',$vo['order_status_info'])}</div>
 
                     <div>
                         <a href="{:url('users/orderDetail',['id'=>$vo['id']])}">订单详情</a>
                     </div>
                 </td>
-                <td>
-                    xx
+                <td class="opt">
+                    {if(in_array('pay',$vo['OrderOptBtn']))}
+                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-danger" href="{:url('Order/pay',['order_id'=>$vo['id']])}">去付款</a>
+                    {/if}
+                    {if(in_array('cancel',$vo['OrderOptBtn']))}
+                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-primary order-cancel" data-id="{$vo['id']}" href="{:url('users/orderDetail',['id'=>$vo['id']])}">取消订单</a>
+                    {/if}
+                    {if(in_array('reminder',$vo['OrderOptBtn']))}
+                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-primary order-reminder" data-id="{$vo['id']}" href="{:url('users/orderDetail',['id'=>$vo['id']])}">催单</a>
+                    {/if}
+                    {if(in_array('logistics',$vo['OrderOptBtn']))}
+                        <a  href="javascript:;" onclick="alert('开发中')">查看物流</a>
+                    {/if}
+                    {if(in_array('rec_log',$vo['OrderOptBtn']))}
+                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-normal order-rec_log" data-id="{$vo['id']}" href="{:url('users/orderDetail',['id'=>$vo['id']])}">确认收货</a>
+                    {/if}
+
+
                 </td>
 
             </tr>

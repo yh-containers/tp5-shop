@@ -18,13 +18,13 @@ class Order extends BaseModel
     protected $insert = ['no','receive_addr'];
 
     //订单状态
-    public static $btn_order_status = ['g_b_order_all','g_b_order_wait_pay','g_b_order_wait_auth','g_b_order_wait_send'];
+    public static $btn_order_status = ['全部订单','等待付款','等待审核','代发货'];
     //订单审核状态
-    public static $fields_is_auth =['f_order_is_auth_no','f_order_is_auth_yes','f_order_is_auth_refund'];
+    public static $fields_is_auth =['未审核','已审核','审核被拒'];
     //订单支付状态
-    public static $fields_is_pay =['f_order_is_pay_no','f_order_is_pay_yes'];
+    public static $fields_is_pay =['未支付','已支付'];
     //订单支付发货
-    public static $fields_is_send =['f_order_is_send_no','f_order_is_send_yes'];
+    public static $fields_is_send =['未发货','已发货'];
 
 
     //设置订单编号--最短 22
@@ -65,6 +65,72 @@ class Order extends BaseModel
 
         return;
     }
+
+
+    //前端--获取订单状态
+    public function getOrderStatusInfoAttr($value,$data)
+    {
+        if($data['status']==1) {
+            return ['退款订单'];
+        }elseif($data['status']==2) {
+            return ['退货'];
+        }
+
+        $msg = ['创建订单'];
+        $show_other = false;
+        if($data['pay_status']){
+            $show_other = true;
+            $msg = ['已付款'];
+        }
+
+        if($show_other) {
+            if($data['is_send']==1) {
+                array_push($msg,'已发货');
+            }else{
+                array_push($msg,'待发货');
+            }
+
+        }
+
+        return $msg;
+    }
+
+    /*
+     * 前端获取订单可操作按钮
+     * 可操作清单
+     * pay-去支付
+     * cancel-取消订单
+     * reminder-催单
+     * del-删除订单
+     * logistics-查看物流
+     * rec_log-确认收货
+     * */
+    public function getOrderOptBtnAttr($value,$data)
+    {
+        //可操作按钮
+//        $opt_list = ['pay','cancel','reminder','del','logistics','rec_log'];
+        $opt_list = [];
+        //去付款
+        if(!$data['pay_status']) {
+            array_push($opt_list,'pay','cancel','del');
+        }
+        //待发货
+        if ($data['pay_status'] && !$data['is_send']) {
+            array_push($opt_list,'reminder');
+        }
+        //已发货
+        if ($data['pay_status'] && $data['is_send']==1) {
+            array_push($opt_list,'logistics','rec_log');
+        }
+        //确认收货
+        if ($data['pay_status'] && $data['is_send']==2) {
+            array_push($opt_list,'logistics','del');
+        }
+
+        return $opt_list;
+
+    }
+
 
 
     /*
@@ -221,7 +287,7 @@ class Order extends BaseModel
     //商品
     public function linkGoods()
     {
-        $fields = 'id,oid,gid,g_name,g_price,g_number,g_img,g_attr,is_send,total_price';
+        $fields = 'id,oid,gid,attr_id,g_name,g_price,g_number,g_img,g_attr,is_send,total_price';
         return $this->hasMany('OrderGoods','oid')->field($fields);
     }
 

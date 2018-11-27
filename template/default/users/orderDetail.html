@@ -14,7 +14,7 @@
             <div class="item-block">
                 <div class="item">
                     <div class="c-l">订单状态：</div>
-                    <div class="c-r">{$model['status']}</div>
+                    <div class="c-r">{:implode(',',$model['order_status_info'])}</div>
                 </div>
 
             </div>
@@ -46,7 +46,7 @@
                 <h3>付款信息</h3>
                 <div class="item">
                     <div class="c-l">付款方式：</div>
-                    <div class="c-r">{$model['pay_id']}</div>
+                    <div class="c-r">{$model['pay_status']}</div>
                 </div>
                 <div class="item">
                     <div class="c-l">商品总额：</div>
@@ -103,7 +103,7 @@
                             <img src="{:get_image_location($vo['g_img'])}" alt="">
                             <div class="info">
                                 <div class="name">
-                                    <a href=""> {$vo['g_name']}</a>
+                                    <a href="{:url('goods/detail',['id'=>$vo['gid'],'attr_id'=>$vo['attr_id']])}"> {$vo['g_name']}</a>
                                 </div>
                                 <div class="attr"> {$vo['g_attr']}</div>
                             </div>

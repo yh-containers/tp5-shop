@@ -14,4 +14,5 @@ class GoodsModel extends BaseModel
     {
         return trim($value);
     }
+
 }

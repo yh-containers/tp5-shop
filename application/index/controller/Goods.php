@@ -6,6 +6,7 @@ class Goods extends Common
     public function detail()
     {
         $id = $this->request->param('id',0,'intval');
+        $attr_id = $this->request->param('attr_id',0,'intval');
         $goods_info = model('Goods')->with(['linkAttr.linkModelAttr','linkPrice'])->where('id','=',$id)->find();
         $goods_stock = $goods_attr =[];
         //商品库存
@@ -46,6 +47,7 @@ class Goods extends Common
         return view('detail',[
             'goods_info' => $goods_info,
             'property' => $property,
+            'attr_id' =>$attr_id
         ]);
     }
 
