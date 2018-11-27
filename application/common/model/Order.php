@@ -12,6 +12,7 @@ class Order extends BaseModel
 
     use SoftDelete,Pay,TMch;
 
+    protected $json = ['invoice'];
 
     protected $name = 's_order';
     //新增入库操作

@@ -9,62 +9,19 @@
     <div class="layui-card">
         <div class="layui-card-header card-header ">收货人信息</div>
         <div class="layui-card-body card-body-flex">
-            <input type="hidden" name="addr_id" value="99"/>
-            <div class="layui-box">
-                <div class="layui-text name">用户名</div>
-                <div class="layui-text phone">18702783614</div>
-                <div class="layui-text addr">安徽 蚌埠 东市区   xxx</div>
+            <input type="hidden" name="addr_id" value="{:isset($list_addr[0])?$list_addr[0]['id']:0}"/>
+            {volist name="list_addr" id="vo"}
+            <div class="layui-box receive-addr {:empty($key)?'active':''}" data-id="{$vo['id']}">
+                {:empty($key)?'<i class="layui-icon layui-icon-ok-circle"></i>':''}
+                <div class="layui-text name">{$vo['rec_name']}</div>
+                <div class="layui-text phone">{$vo['rec_phone']}</div>
+                <div class="layui-text addr">{$vo['province'].' '.$vo['city'].' '.$vo['area'].' '.$vo['addr']}</div>
                 <div class="choose-info">
-                    <a href="#" class="del">删除</a>
-                    <a href="#" class="modify">修改</a>
+                    <a href="{:url('users/addrAdd',['id'=>$vo['id']])}" class="modify">修改</a>
                 </div>
             </div>
-            <div class="layui-box active">
-                <i class="layui-icon layui-icon-ok-circle"></i>
-                <div class="layui-text name">用户名</div>
-                <div class="layui-text phone">18702783614</div>
-                <div class="layui-text addr">安徽 蚌埠 东市区   xxx</div>
-                <div class="choose-info">
-                    <a href="#" class="del">删除</a>
-                    <a href="#" class="modify">修改</a>
-                </div>
-            </div>
-            <div class="layui-box">
-                <div class="layui-text name">用户名</div>
-                <div class="layui-text phone">18702783614</div>
-                <div class="layui-text addr">安徽 蚌埠 东市区   xxx</div>
-                <div class="choose-info">
-                    <a href="#" class="del">删除</a>
-                    <a href="#" class="modify">修改</a>
-                </div>
-            </div>
-            <div class="layui-box">
-                <div class="layui-text name">用户名</div>
-                <div class="layui-text phone">18702783614</div>
-                <div class="layui-text addr">安徽 蚌埠 东市区   xxx</div>
-                <div class="choose-info">
-                    <a href="#" class="del">删除</a>
-                    <a href="#" class="modify">修改</a>
-                </div>
-            </div>
-            <div class="layui-box">
-                <div class="layui-text name">用户名</div>
-                <div class="layui-text phone">18702783614</div>
-                <div class="layui-text addr">安徽 蚌埠 东市区   xxx</div>
-                <div class="choose-info">
-                    <a href="#" class="del">删除</a>
-                    <a href="#" class="modify">修改</a>
-                </div>
-            </div>
-            <div class="layui-box">
-                <div class="layui-text name">用户名</div>
-                <div class="layui-text phone">18702783614</div>
-                <div class="layui-text addr">安徽 蚌埠 东市区   xxx</div>
-                <div class="choose-info">
-                    <a href="#" class="del">删除</a>
-                    <a href="#" class="modify">修改</a>
-                </div>
-            </div>
+            {/volist}
+
             <div class="layui-box add-addr">
                 <i class="layui-icon layui-icon-location"></i>
                 <a href="{:url('users/addrAdd')}">添加新地址</a>
@@ -76,8 +33,9 @@
         <div class="layui-card-body pay-style">
             <input type="hidden" name="pay_id" value="1"/>
             <ul>
-                <li><a class="active" href="##"><img src="/static/images/paywx_03.jpg"/></a></li>
-                <li><a href="##"><img src="/static/images/payzfb_03.jpg"/></a></li>
+                {for start="1" end="count($pay_style)"}
+                <li data-id="{$i}"><a  class="{:$i==1?'active':''}"  href="javascript:;"><img src="{:get_image_location($pay_style[$i]['img'])}"/></a></li>
+                {/for}
             </ul>
         </div>
     </div>
@@ -119,10 +77,15 @@
         <div class="layui-card-header card-header">发票信息</div>
         <div class="layui-card-body invoice">
             <div class="intro">
-                <span>发票类型</span>
-                <span>发票说明</span>
+                <span class="invoice-type">
+                    {if(isset($fields_type_info[0]))}
+                        {$fields_type_info[0]['name']}
+                    {else/}
+                        请选择发票类型
+                    {/if}
+                </span>
             </div>
-            <a href="#">修改</a>
+            <a href="javascript:;" id="mod-invoice">修改</a>
         </div>
     </div>
     <div class="layui-card">
@@ -166,12 +129,55 @@
 
     <div class="layui-card">
         <div class="layui-card-body order-sure">
-            <button>提交订单</button>
+            <button id="submit">提交订单</button>
         </div>
     </div>
 
+        <div class="content layui-card user-invoice layui-form" id="user-invoice" style="display: none">
+            <div class="layui-form-item">
+                <label class="layui-form-label">发票类型</label>
+                <div class="layui-input-block">
+                    <ul  id="tabHeader"  lay-allowClose="true" lay-filter="demo" >
+                        {volist name="fields_type_info" id="vo"}
+                        <li class="layui-inline">
+                            <input type="radio" name="invoice-type" value="{$key}"  title="{$vo['name']}" {:empty($key)?'checked':''} />
+                        </li>
+                        {/volist}
+                    </ul>
+
+                </div>
+            </div>
+            <div class="" id="tabBody">
+                {volist name="fields_type_info" id="vo"}
+                <div class="layui-tab-item xxx {:empty($key)?'layui-show':''} ">
+
+                    {volist name="vo['info']" id="item"}
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">{$item['name']}</label>
+                        <div class="layui-input-block">
+                            {if($item['type']=='text')}
+                            <input type="text" name="{$item['field']}" placeholder="{$item['name']}" value="{$model_invoice->getData($item['field'])}" class="layui-input">
+                            {elseif($item['type']=='file')/}
+                            <input type="hidden" name="{$item['field']}" value="{$model_invoice->getData($item['field'])}"/>
+                            <button type="button" class="layui-btn" id="test1">
+                                <i class="layui-icon">&#xe67c;</i>上传图片
+                            </button>
+                            <a href="{:get_image_location($model_invoice->getData($item['field']))}" target="_blank">
+                                <img src="{:get_image_location($model_invoice->getData($item['field']))}" width="80px" height="30px"/>
+                            </a>
+                            {/if}
+                        </div>
+                    </div>
+                    {/volist}
+
+                </div>
+                {/volist}
+            </div>
+        </div>
     </form>
 </div>
+
+
 
 
 
@@ -179,6 +185,66 @@
 {/block}
 {block name="script"}
 <script>
+    $(function(){
+        var layer
+        layui.use(['layer','form','element'],function(){
+            layer = layui.layer;
+            var form = layui.form;
+            var element = layui.element;
 
+
+
+            //JavaScript
+            element.tab({
+                headerElem: '#tabHeader>li' //指定tab头元素项
+                ,bodyElem: '#tabBody>.xxx' //指定tab主体元素项
+            });
+
+
+
+        })
+
+        //选择收货地址
+        $(".receive-addr").click(function(){
+            if($(this).hasClass('active')){
+
+            }else{
+                $(".receive-addr.active").removeClass('active').find('i').remove()
+                $(this).addClass('active').prepend('<i class="layui-icon layui-icon-ok-circle"></i>')
+                //赋值
+                $(this).parent().find('input[name="addr_id"]').val($(this).data('id'))
+            }
+        })
+        //选择支付方式
+        $(".pay-style li").click(function(){
+            if($(this).hasClass('active')){
+
+            }else{
+                $(".pay-style li a.active").removeClass('active')
+                $(this).find('a').addClass('active')
+                //赋值
+                $(this).parent().parent().find('input[name="pay_id"]').val($(this).data('id'))
+            }
+        })
+
+        //选择发票
+        $("#mod-invoice").click(function(){
+            var $this = $(this)
+            layer.open({
+                title:'选择发票'
+                ,btn:['确定','取消']
+                ,type:1
+                ,shadeClose:true
+                ,area:['800px','550px']
+                ,content:$("#user-invoice")
+                ,yes:function(index, layero){
+                    // var type = $(layero).find("#tabHeader input[type='radio']:checked").val();
+                    // console.log($(layero).find("#tabHeader input[type='radio']:checked").attr('title'));
+                    $this.parent().find('.invoice-type').text($(layero).find("#tabHeader input[type='radio']:checked").attr('title'))
+                    layer.close(index); //如果设定了yes回调，需进行手工关闭
+                }
+            });
+        })
+    })
 </script>
 {/block}

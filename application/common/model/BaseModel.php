@@ -6,6 +6,8 @@ use think\Validate;
 
 class BaseModel extends Model
 {
+    // 设置JSON数据返回数组
+    protected $jsonAssoc = true;
 
     public static $fields_status = ['','正常','关闭'];
     protected $autoWriteTimestamp = true;

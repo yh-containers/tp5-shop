@@ -1,11 +1,11 @@
 <div class="layui-header header">
     <div class="layui-main layui-main-width">
-        <a class="layui-inline logo">LOGO</a>
+        <a href="{:url('index/index')}" class="layui-inline logo">LOGO</a>
         <div class="search-content">
             <div class="top">
                 欢迎您xxxx
                 <ul class="layui-block tip-href">
-                    <li><a>用户中心</a></li>
+                    <li><a href="{:url('users/order')}">用户中心</a></li>
                     <li><a>平台公告</a></li>
                     <li><a>客服中心</a></li>
                 </ul>
@@ -21,7 +21,7 @@
                     </button>
                 </div>
                 <div class="cart">
-                    <a>购物车</a>
+                    <a href="{:url('goods/cart')}">购物车</a>
                 </div>
             </div>
             <div class="down">

@@ -155,13 +155,32 @@ class Goods extends Common
 //            dump($key);
 //        }
 //        dump($goods);exit;
+
+
+
+        //获取收货地址
+        $model_addr = new \app\common\model\UserAddr();
+        $list_addr = $model_addr->where('uid',$this->user_id)->order('is_default','desc')->order('id','desc')->select();
+
+        //支付方式
+        $pay_style = \app\common\server\pay\ThirdServer::getPayStyle();
+
+        //发票信息
+        $model = new \app\common\model\UserInvoice();
+        $model_invoice = $model->where('uid',$this->user_id)->find();
+
+
         return view('order',[
-            'number' => $number,
-            'total_money' => $total_money,
-            'pay_money'  => $pay_money,
-            'dis_money'  => $dis_money,
-            'freight_money'  => $freight_money, //运费
-            'goods_list' => $goods
+            'number'        => $number,
+            'total_money'   => $total_money,
+            'pay_money'     => $pay_money,
+            'dis_money'     => $dis_money,
+            'freight_money' => $freight_money, //运费
+            'goods_list'    => $goods,
+            'list_addr'     => $list_addr,
+            'pay_style'    => $pay_style,
+            'fields_type_info' => $model::$fields_type_info,
+            'model_invoice' => $model_invoice
         ]);
     }
 

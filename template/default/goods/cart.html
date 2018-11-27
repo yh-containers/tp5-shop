@@ -27,9 +27,9 @@
             <tr class="goods-info">
                 <td><input type="checkbox"/></td>
                 <td class="info">
-                    <a href="##" class="img"><img src="{:get_image_location($vo['cover_img'])}"/></a>
+                    <a href="{:url('goods/detail',['id'=>$vo['link_one_price']['gid'],'attr_id'=>$vo['link_goods_cart']['attr_id']])}" class="img"><img src="{:get_image_location($vo['cover_img'])}"/></a>
                     <div>
-                        <a href="###" class="name">{$vo['name']}</a>
+                        <a href="{:url('goods/detail',['id'=>$vo['link_one_price']['gid'],'attr_id'=>$vo['link_goods_cart']['attr_id']])}" class="name">{$vo['name']}</a>
                         <span href="###" class="name">【{:implode('】 【',$vo['link_one_price']['attr_info_name'])}】</span>
                     </div>
 
@@ -147,6 +147,10 @@
 
                 goods.push(info.join('_'))
             })
+            if(goods.length==0){
+                alert('请选择购买的商品')
+                return false;
+            }
             window.location.href = "{:url('order',[],false,false)}/goods/"+goods.join(',');
         })
     })

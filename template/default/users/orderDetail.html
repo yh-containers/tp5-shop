@@ -14,7 +14,7 @@
             <div class="item-block">
                 <div class="item">
                     <div class="c-l">订单状态：</div>
-                    <div class="c-r">{:implode(',',$model['order_status_info'])}</div>
+                    <div class="c-r">{:$model?implode(',',$model['order_status_info']):''}</div>
                 </div>
 
             </div>

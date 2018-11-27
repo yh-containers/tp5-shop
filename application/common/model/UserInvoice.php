@@ -30,4 +30,50 @@ class UserInvoice extends BaseModel
         ]
     ];
 
+    //获取发票数据
+    public function getInvoice($type,$array=[])
+    {
+        $fields_type_info = self::$fields_type_info;
+        if(isset($fields_type_info[$type])){
+            $info = $fields_type_info[$type]['info'];
+            $data = [];
+            foreach ($info as $vo) {
+                if(!empty($array[$vo['field']])) {
+                    $data[$vo['field']] = $array[$vo['field']];
+                }
+            }
+            if(empty($data)){
+                return [false,'请输入发票数据',[]];
+            }
+            $data['type'] = $type;
+            return [true,'',$data];
+        }else{
+            return [false,'发票类型异常',[]];
+        }
+    }
+
+    //获取发票数据
+    public function getInvoiceInfo($type,array $value)
+    {
+        $fields_type_info = self::$fields_type_info;
+
+        if(isset($fields_type_info[$type])){
+            $info = $fields_type_info[$type]['info'];
+
+            $data[] = ['name'=>'发票类型','value'=>$fields_type_info[$type]['name']];
+            foreach ($info as $vo) {
+                $arr =  ['name'=>$vo['name'],'value'=>''];
+                if(!empty($value[$vo['field']])) {
+                    $arr['value'] = $value[$vo['field']];
+                    $data[] = $arr;
+                }
+            }
+            return $data;
+        }else{
+            return [];
+        }
+    }
+
+
+
 }

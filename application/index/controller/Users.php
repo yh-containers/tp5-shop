@@ -100,9 +100,18 @@ class Users extends Common
         $model = new \app\common\model\Order();
 
         $model = $model->with(['linkGoods','linkMerchant'])->where(['uid'=>$this->user_id,'id'=>$id])->find();
-//        dump($model);exit;
+        $model_invoice = new \app\common\model\UserInvoice();
+        $invoice = $model->getData('invoice');
+        $invoice_type = $invoice?$invoice['type']:false;
+        $data_invoice = [];//发票信息
+        if($invoice_type!==false) {
+            $data_invoice = $model_invoice->getInvoiceInfo($invoice_type,$invoice);
+
+        }
+//        dump($data_invoice);exit;
         return view('orderDetail',[
             'model' =>$model,
+            
         ]);
     }
 
@@ -175,21 +184,18 @@ class Users extends Common
         $input_data = $this->request->param();
 
         $model = new \app\common\model\UserInvoice();
-        $fields_type_info = $model::$fields_type_info;
-        if(isset($fields_type_info[$type])){
-            $info = $fields_type_info[$type]['info'];
-            $data = [];
-            $data['uid'] = $this->user_id;
-            foreach ($info as $vo) {
-                $data[$vo['field']] = empty($input_data[$vo['field']])?'':$input_data[$vo['field']];
-            }
 
+        list($bool,$msg,$data) = $model->getInvoice($type,$input_data);
+
+        if($bool!==false){
+
+            $data['uid'] = $this->user_id;
             $model_obj = $model->where('uid',$this->user_id)->find();
             $model_opt = $model_obj?$model_obj:$model;
             $bool = $model_opt->save($data);
             return ['code'=>$bool?1:0,'msg'=>'操作成功'];
         }else{
-            return ['code'=>0,'msg'=>'请求异常'];
+            return ['code'=>0,'msg'=>$msg];
         }
     }
 }

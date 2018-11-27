@@ -25,6 +25,7 @@ class ThirdServer
             'key' => 'wechat',
             'name' => '微信',
             'lang' => 'g_pay_wechat',
+            'img'   => 'static/images/paywx_03.jpg',
             'class'=>'\app\common\server\pay\Wechat',
             'config'=>[
                 //键的值仅供测试使用
@@ -39,6 +40,7 @@ class ThirdServer
             'key'=>'alipay',
             'name' => '支付宝',
             'lang' => 'g_pay_alipay',
+            'img'   => 'static/images/payzfb_03.jpg',
             'class'=>'\app\common\server\pay\AliPay',
             'config'=>[
                 'gateway_url'   =>  'https://openapi.alipay.com/gateway.do',
@@ -49,6 +51,20 @@ class ThirdServer
             ]
         ]
     ];
+
+    public static function getPayStyle()
+    {
+        $data = self::$pay_class;
+        foreach($data as &$vo) {
+            if(isset($vo['class'])) {
+                unset($vo['class']);
+            }
+            if(isset($vo['config'])) {
+                unset($vo['config']);
+            }
+        }
+        return  $data;
+    }
 
 
     /*
