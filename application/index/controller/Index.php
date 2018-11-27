@@ -43,4 +43,6 @@ class Index extends Common
 
         return response()->content($qrCode->writeString())->header(['Content-Type'=>$qrCode->getContentType()]);
     }
+
+
 }

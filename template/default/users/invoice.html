@@ -1,0 +1,113 @@
+{extend name="./users/base"/}
+
+{block name="slice-content-main"}
+
+<div class="top-msg">
+    发票信息
+</div>
+<div class="content layui-card user-invoice">
+    <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">发票类型</label>
+                <div class="layui-input-block">
+                    <ul  id="tabHeader"  lay-allowClose="true" lay-filter="demo" >
+                    {volist name="fields_type_info" id="vo"}
+                        <li class="layui-inline">
+                            <input type="radio" name="type" value="{$key}"  title="{$vo['name']}" {:empty($key)?'checked':''} />
+                        </li>
+                    {/volist}
+                    </ul>
+
+                </div>
+            </div>
+        <div class="" id="tabBody">
+            {volist name="fields_type_info" id="vo"}
+            <div class="layui-tab-item xxx {:empty($key)?'layui-show':''} ">
+
+                {volist name="vo['info']" id="item"}
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">{$item['name']}</label>
+                    <div class="layui-input-block">
+                        {if($item['type']=='text')}
+                        <input type="text" name="{$item['field']}" placeholder="{$item['name']}" value="{$model_obj->getData($item['field'])}" class="layui-input">
+                        {elseif($item['type']=='file')/}
+                        <input type="hidden" name="{$item['field']}" value="{$model_obj->getData($item['field'])}"/>
+                        <button type="button" class="layui-btn" id="test1">
+                            <i class="layui-icon">&#xe67c;</i>上传图片
+                        </button>
+                        <a href="{:get_image_location($model_obj->getData($item['field']))}" target="_blank">
+                            <img src="{:get_image_location($model_obj->getData($item['field']))}" width="80px" height="30px"/>
+                        </a>
+                        {/if}
+                    </div>
+                </div>
+                {/volist}
+
+            </div>
+            {/volist}
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+{/block}
+
+{block name="script"}
+<script>
+    layui.use(['form','upload','element'], function(){
+        var upload = layui.upload;
+        var element = layui.element;
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            var obj = data.field
+            $.post("{:url('invoiceAdd')}",obj,function(result){
+                layer.msg(result.msg)
+            })
+
+            return false;
+        });
+
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#test1' //绑定元素
+            ,url: '{:url("upload/upload")}' //上传接口
+            ,data: {'route':'invoice'}
+            ,acceptMime:'image/*'
+            ,done: function(res){
+                //上传完毕回调
+                //上传完毕回调
+                layer.msg(res.msg)
+                if(res.code == 1) {
+                    var item = this.item;
+                    //第一个图添加隐藏图片地址
+                    $(item).parent().find('input:eq(0)').val(res.data)
+
+                    $(item).parent().find('img').attr('src','/'+res.data)
+                }
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+        //JavaScript
+        element.tab({
+            headerElem: '#tabHeader>li' //指定tab头元素项
+            ,bodyElem: '#tabBody>.xxx' //指定tab主体元素项
+        });
+        //一些事件监听
+        // element.on('tab(demo)', function(data){
+        //     console.log(data);
+        // });
+
+    });
+</script>
+{/block}

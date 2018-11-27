@@ -1465,5 +1465,11 @@ body.bg-gray{
     color: #666;
 }
 
+/*发票管理*/
+.user-invoice {
 
+}
+.user-invoice .layui-form-item{
+    width: inherit;
+}
 

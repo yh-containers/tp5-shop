@@ -153,4 +153,43 @@ class Users extends Common
         list($bool,$msg) = $model->receive($id,$this->user_id);
         return ['code'=>(int)$bool,'msg'=>$msg];
     }
+
+    /*
+     * 发票管理
+     * */
+    public function invoice()
+    {
+        $model = new \app\common\model\UserInvoice();
+        $model_obj = $model->where('uid',$this->user_id)->find();
+
+
+
+        return view('invoice',[
+            'fields_type_info' => $model::$fields_type_info,
+            'model_obj' => $model_obj
+        ]);
+    }
+    public function invoiceAdd()
+    {
+        $type = $this->request->param('type');
+        $input_data = $this->request->param();
+
+        $model = new \app\common\model\UserInvoice();
+        $fields_type_info = $model::$fields_type_info;
+        if(isset($fields_type_info[$type])){
+            $info = $fields_type_info[$type]['info'];
+            $data = [];
+            $data['uid'] = $this->user_id;
+            foreach ($info as $vo) {
+                $data[$vo['field']] = empty($input_data[$vo['field']])?'':$input_data[$vo['field']];
+            }
+
+            $model_obj = $model->where('uid',$this->user_id)->find();
+            $model_opt = $model_obj?$model_obj:$model;
+            $bool = $model_opt->save($data);
+            return ['code'=>$bool?1:0,'msg'=>'操作成功'];
+        }else{
+            return ['code'=>0,'msg'=>'请求异常'];
+        }
+    }
 }
