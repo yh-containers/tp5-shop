@@ -24,6 +24,30 @@
                     <div class="c-l">订单状态：</div>
                     <div class="c-r">{:$model?implode(',',$model['order_status_info']):''}</div>
                 </div>
+                {if(count($flow_info['back_state'])>0)}
+                <div class="item">
+                    <div class="c-l">退货状态：</div>
+                    <div class="c-r">
+                        {$flow_info['back_state'][0]}
+                        {if(in_array('again',$flow_info['back_state'][1]))}
+                        <a class="layui-btn layui-btn-xs layui-btn-radius flow-again" href="{:url('',['info'=>$info,'is_again'=>1])}">重新申请</a>
+                        {/if}
+                        {if(in_array('cancel',$flow_info['back_state'][1]))}
+                        <a class="layui-btn layui-btn-xs layui-btn-radius  layui-btn-danger flow-cancel" data-id="{$flow_info['id']}" href="javascript:;">取消申请</a>
+                        {/if}
+                        {if(in_array('send',$flow_info['back_state'][1]))}
+                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-normal flow-send" data-id="{$flow_info['id']}" href="javascript:;">填写物流信息</a>
+                        {/if}
+                        {if(in_array('change_send',$flow_info['back_state'][1]))}
+                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-normal flow-send" data-id="{$flow_info['id']}" href="javascript:;">修改物流信息</a>
+                        {/if}
+                        {if(in_array('complete',$flow_info['back_state'][1]))}
+                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-normal flow-complete" data-id="{$flow_info['id']}" href="javascript:;">确认完成</a>
+                        {/if}
+                    </div>
+                </div>
+                {/if}
+
 
             </div>
         </div>
@@ -38,7 +62,6 @@
                     <td width="180">商品信息</td>
                     <td width="120">价格</td>
                     <td width="120">数量</td>
-                    <td width="120">退货</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -58,9 +81,6 @@
                     </td>
                     <td>￥{$vo['g_price']}</td>
                     <td>{$vo['g_number']}</td>
-                    <td>
-                        <a class="layui-btn layui-btn-sm layui-btn-danger order-back" data-oid="{$model['id']}" data-oid_l_id="{$vo['id']}"  href="javascript:;" >申请退货</a>
-                    </td>
                 </tr>
                 {/volist}
 
@@ -75,7 +95,10 @@
         <div class="layui-card-header card-header ">申请理由</div>
         <div class="layui-card-body ">
             <form  class="layui-form" action="" id="form">
+                {:token()}
                 <input type="hidden" name="og_id" value="{$info}"/>
+                <input type="hidden" name="fid" value="{$flow_info['id']}"/>
+                <input type="hidden" name="is_again" value="{$is_again}"/>
                 <div class="layui-form-item">
                     <label class="layui-form-label">申请理由</label>
                     <div class="layui-input-block">
@@ -101,8 +124,6 @@
                     </div>
                 </div>
             </form>
-
-
         </div>
     </div>
 
@@ -112,7 +133,7 @@
 
             <ul class="layui-timeline">
 
-                {volist name="flow_list" id="vo"}
+                {volist name="flow_info['link_flow']" id="vo"}
                 <li class="layui-timeline-item">
                     <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
                     <div class="layui-timeline-content layui-text">
@@ -133,13 +154,34 @@
                 <li class="layui-timeline-item">
                     <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
                     <div class="layui-timeline-content layui-text">
-                        <div class="layui-timeline-title">过去</div>
+                        <div class="layui-timeline-title">{:empty($flow_info)?'暂无退货流程':('退货单号：'.$flow_info['no'])}}</div>
                     </div>
                 </li>
             </ul>
         </div>
     </div>
 
+    <div id="logistics" style="display: none">
+        <form class="layui-form" action="">
+            <input type="hidden" name="id" value="{$flow_info['id']}"/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">物流名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="logistics_name" value="{$flow_info['logistics_name']}"  placeholder="物流名称"  class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">物流单号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="logistics_no" value="{$flow_info['logistics_no']}" placeholder="物流单号"class="layui-input">
+                </div>
+            </div>
+
+
+
+        </form>
+    </div>
 
 </div>
 {/block}
@@ -164,7 +206,7 @@
                     $.post("{:url('reqGoodsBackAction')}",data.field,function(result){
                         layer.msg(result.msg)
                         if(result.code ==1) {
-                            setTimeout(function(){window.location.reload()},1000)
+                            setTimeout(function(){ window.location.href="{:url('',['info'=>$info])}"},1000)
                         }
                     })
                 })
@@ -199,11 +241,53 @@
         $("#back-goods-img").on('click','.layui-icon-close',function(){
             $(this).parent().remove()
         })
-        $(".order-back").click(function(){
-            var oid = $(this).data('oid')
-            var oid_l_id = $(this).data('oid_l_id')
-            layer.confirm("是否申请退货?",function(){
-                window.location.href = "{:url('UsersFlow/reqGoodBack',[],false,false)}/info/"+oid+'-'+oid_l_id
+
+
+        //取消申请
+        $(".flow-cancel").click(function(){
+            var id = $(this).data('id')
+            layer.confirm('是否取消申请流程?',function(){
+                $.post("{:url('flowCancel')}",{id:id},function(result){
+                    layer.msg(result.msg)
+                    if(result.code==1) {
+                        setTimeout(function(){window.location.reload()},1000)
+                    }
+                })
+            })
+        })
+
+        //填写物流信息
+        $(".flow-send").click(function(){
+
+            var $this = $(this)
+            layer.open({
+                title:'填写物流信息'
+                ,btn:['确定','取消']
+                ,type:1
+                ,shadeClose:true
+                ,area:['400px','300px']
+                ,content:$("#logistics")
+                ,yes:function(index, layero){
+                    $.post("{:url('flowLogisticsAction')}",$("#logistics form").serialize(),function(result){
+                        layer.msg(result.msg)
+                        if(result.code==1) {
+                            setTimeout(function(){window.location.reload()},1000)
+                        }
+                    })
+                }
+            });
+        })
+
+        //确认完成
+        $(".flow-complete").click(function(){
+            var id = $(this).data('id')
+            layer.confirm('确认完成退货流程？',function(){
+                $.post("{:url('flowComplete')}",{id:id},function(result){
+                    layer.msg(result.msg)
+                    if(result.code==1) {
+                        setTimeout(function(){window.location.reload()},1000)
+                    }
+                })
             })
         })
     })

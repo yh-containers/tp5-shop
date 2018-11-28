@@ -1,0 +1,91 @@
+{extend name="base"/}
+<!--上级栏目-->
+{block name="slider_bar"}order-refundgoods{/block}
+<!--面包屑-->
+{block name="breadcrumb"}
+<i class="ace-icon fa fa-home fa-users"></i>
+<li>订单管理</li>
+<li>退货订单</li>
+{/block}
+
+
+{block name="content"}
+
+
+<!-- div.table-responsive -->
+
+<!-- div.dataTables_borderWrap -->
+<div class="dataTables_wrapper form-inline no-footer">
+    <div class="row">
+        <div class="col-xs-6 btn-group btn-corner">
+            {volist name="btn_order_status" id="vo"}
+                <a href="{:url('',['order_state'=>$key])}" class="btn {:$order_state==$key?'btn-info':''}" type="button">{:c_lang($vo)}</a>
+            {/volist}
+        </div>
+        <div class="col-xs-5 text-right">
+            <form class="form-search">
+                <span class="input-icon align-middle">
+                    <i class="ace-icon fa fa-search"></i>
+                    <input type="text" class="search-query" name="keyword" value="{$keyword}" placeholder="单号">
+                </span>
+                <button class="btn btn-sm" type="submit">Go!</button>
+            </form>
+        </div>
+        <div class="col-xs-1">
+
+        </div>
+    </div>
+    <table id="simple-table" class="table  table-bordered table-hover">
+        <thead>
+        <tr>
+            <th width="80">序号</th>
+            <th width="120">单号</th>
+            <th width="120">创建时间</th>
+            <th width="120">状态</th>
+            <th width="120">操作</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {volist name="list" id="vo"}
+        <tr>
+            <td>{:$i}</td>
+            <td>{$vo['no']}</td>
+            <td>{$vo['create_time']}</td>
+
+            <td>{:$vo['flow_status']}</td>
+            <td>
+                <a href="{:url('refGoodsDetail',['id'=>$vo['id']])}">详情</a>
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+</div>
+{$page|raw}
+
+{/block}
+
+{block name="script"}
+<script>
+    //And for the first simple table, which doesn't have TableTools or dataTables
+    //select/deselect all rows according to table header checkbox
+    $('.show-details-btn').on('click', function(e) {
+        e.preventDefault();
+        $(this).closest('tr').next().toggleClass('open');
+        $(this).find(ace.vars['.icon']).toggleClass('fa-angle-double-down').toggleClass('fa-angle-double-up');
+    });
+
+    $(".goods-copy").click(function(){
+        var id = $(this).data('id');
+        layer.confirm("{:c_lang($sys_master, 'p_t_goods_copy')}",function(){
+            $.post("{:url('goodsCopy')}",{id:id},function(result){
+                layer.msg(result.msg)
+                if(result.code==1){
+                    setTimeout(function(){window.location.reload()},1000)
+                }
+            })
+        })
+    })
+</script>
+{/block}

@@ -25,7 +25,7 @@ class Order extends BaseModel
     //订单支付状态
     public static $fields_is_pay =['未支付','已支付'];
     //订单支付发货
-    public static $fields_is_send =['未发货','已发货'];
+    public static $fields_is_send =['未发货','已发货','确认收货'];
 
 
     //设置订单编号--最短 22
