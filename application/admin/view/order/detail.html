@@ -4,8 +4,8 @@
 <!--面包屑-->
 {block name="breadcrumb"}
 <i class="ace-icon fa fa-home fa-users"></i>
-<li>{:lang('c_order')}</li>
-<li>{:lang('c_order_detail')}</li>
+<li>订单管理</li>
+<li>订单详情</li>
 {/block}
 {block name="css"}
 <style>
@@ -107,30 +107,27 @@
     <div class="widget-container-col ui-sortable">
         <div class="widget-box transparent ui-sortable-handle">
             <div class="widget-header">
-                <h3 class="widget-title lighter">{:c_lang($sys_master,'p_f_order_invoice_info')}</h3>
+                <h3 class="widget-title lighter">发票信息</h3>
 
             </div>
 
             <div class="widget-body">
                 <table class="table  table-bordered detail-table">
                     <tbody>
-                    <tr>
-                        <td width="80">{:c_lang($sys_master,'p_f_order_invoice_type')}</td>
-                        <td width="200">xxxx</td>
-                        <td width="80">{:c_lang($sys_master,'p_f_order_invoice_rise')}</td>
-                        <td width="200"></td>
-                        <td width="80"></td>
-                        <td width="200"></td>
-                    </tr>
-                    <tr>
-                        <td>{:c_lang($sys_master,'p_f_order_invoice_no')}</td>
-                        <td></td>
-                        <td>{:c_lang($sys_master,'p_f_order_invoice_mark')}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
 
+                    {volist name="data_invoice" id="vo"}
+
+                    {if($key>0 && $key%3==0)}
+                    <tr>
+                    {/if}
+                        <td width="80">{$vo['name']}</td>
+                        <td width="200">{$vo['value']}</td>
+
+                    {if($key>0 && $key%3==0)}
                     </tr>
+                    {/if}
+                    {/volist}
+
 
                     </tbody>
                 </table>

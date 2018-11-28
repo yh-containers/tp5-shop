@@ -81,6 +81,9 @@
                     {if(in_array('pay',$vo['OrderOptBtn']))}
                         <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-danger" href="{:url('Order/pay',['order_id'=>$vo['id']])}">去付款</a>
                     {/if}
+                    {if(in_array('back',$vo['OrderOptBtn']))}
+                        <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-danger" href="{:url('Users/orderBack',['order_id'=>$vo['id']])}">申请退货</a>
+                    {/if}
                     {if(in_array('cancel',$vo['OrderOptBtn']))}
                         <a class="layui-btn layui-btn-xs layui-btn-radius layui-btn-primary order-cancel" data-id="{$vo['id']}" href="javascript:;">取消订单</a>
                     {/if}

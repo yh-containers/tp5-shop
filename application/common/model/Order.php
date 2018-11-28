@@ -89,6 +89,8 @@ class Order extends BaseModel
         if($show_other) {
             if($data['is_send']==1) {
                 array_push($msg,'已发货');
+            }elseif($data['is_send']==2){
+                array_push($msg,'已完成');
             }else{
                 array_push($msg,'待发货');
             }
@@ -107,6 +109,7 @@ class Order extends BaseModel
      * del-删除订单
      * logistics-查看物流
      * rec_log-确认收货
+     * back-退货
      * */
     public function getOrderOptBtnAttr($value,$data)
     {
@@ -127,7 +130,7 @@ class Order extends BaseModel
         }
         //确认收货
         if ($data['pay_status'] && $data['is_send']==2) {
-            array_push($opt_list,'logistics','del');
+            array_push($opt_list,'logistics','back','del');
         }
         //订单已取消
         if ($data['status']==3) {
@@ -138,6 +141,18 @@ class Order extends BaseModel
 
     }
 
+    /*
+     * 检测商品是否达到退货流程
+     * */
+    public function checkOrderBackState($model_info)
+    {
+        if(empty($model_info)){
+            return [false,'订单信息异常'];
+        }elseif($model_info['is_send']!=2) {
+            return [false,'无法进行退货流程:用户暂未收货'];
+        }
+        return [true,''];
+    }
 
 
 
@@ -367,6 +382,36 @@ class Order extends BaseModel
         }else{
             return [false,'订单流程异常，无法进行此操作'];
         }
+    }
+
+    /*
+     * 订单退货流程-查看
+     * */
+    public function back($order_id,$user_id)
+    {
+        $model_info = $this->with(['linkGoods','linkMerchant'])->where(['uid'=>$user_id,'id'=>$order_id])->find();
+        //检测订单是否满足退货流程
+        list($bool,$msg) = $this->checkOrderBackState($model_info);
+        !$bool && abort('200', $msg);
+        return $model_info;
+    }
+
+    /*
+     * 订单退货流程-商品申请
+     * @param $order_id int 订单id
+     * @param $user_id int 用户id
+     * @pram $order_goods_link_id int 订单关联商品表的主键
+     * return object
+     * */
+    public function reqGoodsBack($order_id,$user_id,$order_goods_link_id)
+    {
+        $model_info = $this->with(['linkGoods'=>function($query)use($order_goods_link_id){
+            $query->where('id',$order_goods_link_id);
+        },'linkMerchant'])->where(['uid'=>$user_id,'id'=>$order_id])->find();
+        //检测订单是否满足退货流程
+        list($bool,$msg) = $this->checkOrderBackState($model_info);
+        !$bool && abort('200', $msg);
+        return $model_info;
     }
 
 

@@ -1,0 +1,212 @@
+{extend name="./users/base"/}
+<!--背景色-->
+{block name="slice-content-start"}
+{include file="common/header"/}
+{/block}
+{block name="style"}
+<style>
+    #back-goods-img span{ display: inline-block;width: 80px;height: 80px;border: 1px solid #CCCCCC}
+    #back-goods-img span img{ width: 80px;height: 80px}
+    #back-goods-img span i{ position: absolute;color:#fff;background: #d43a48}
+    .layui-timeline-item .img{}
+    .layui-timeline-item .img img{ width: 80px;height: 80px}
+</style>
+{/block}
+{block name="slice-content-main"}
+<!--广告块-->
+<div class="layui-main layui-main-width main-content detail-header-body">
+    <div class="layui-card">
+        <div class="layui-card-header card-header ">订单号:{$model['no']}</div>
+        <div class="layui-card-body ">
+
+            <div class="item-block">
+                <div class="item">
+                    <div class="c-l">订单状态：</div>
+                    <div class="c-r">{:$model?implode(',',$model['order_status_info']):''}</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-card">
+        <div class="layui-card-header card-header ">订单商品清单</div>
+        <div class="layui-card-body ">
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                <tr>
+                    <td width="180">商品信息</td>
+                    <td width="120">价格</td>
+                    <td width="120">数量</td>
+                    <td width="120">退货</td>
+                </tr>
+                </thead>
+                <tbody>
+                {volist name="model['link_goods']" id="vo"}
+                <tr>
+                    <td>
+                        <div class="goods-info">
+                            <img src="{:get_image_location($vo['g_img'])}" alt="">
+                            <div class="info">
+                                <div class="name">
+                                    <a href="{:url('goods/detail',['id'=>$vo['gid'],'attr_id'=>$vo['attr_id']])}"> {$vo['g_name']}</a>
+                                </div>
+                                <div class="attr"> {$vo['g_attr']}</div>
+                            </div>
+                        </div>
+
+                    </td>
+                    <td>￥{$vo['g_price']}</td>
+                    <td>{$vo['g_number']}</td>
+                    <td>
+                        <a class="layui-btn layui-btn-sm layui-btn-danger order-back" data-oid="{$model['id']}" data-oid_l_id="{$vo['id']}"  href="javascript:;" >申请退货</a>
+                    </td>
+                </tr>
+                {/volist}
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+    <div class="layui-card">
+        <div class="layui-card-header card-header ">申请理由</div>
+        <div class="layui-card-body ">
+            <form  class="layui-form" action="" id="form">
+                <input type="hidden" name="og_id" value="{$info}"/>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">申请理由</label>
+                    <div class="layui-input-block">
+                        <textarea name="content" placeholder="请输入内容" class="layui-textarea" maxlength="200"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">上传图片</label>
+                    <div class="layui-input-block">
+                        <button type="button" class="layui-btn" id="test1">
+                            <i class="layui-icon">&#xe67c;</i>上传图片
+                        </button>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block" id="back-goods-img">
+
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+
+    <div class="layui-card">
+        <div class="layui-card-header card-header ">退货时间线</div>
+        <div class="layui-card-body ">
+
+            <ul class="layui-timeline">
+
+                {volist name="flow_list" id="vo"}
+                <li class="layui-timeline-item">
+                    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                    <div class="layui-timeline-content layui-text">
+                        <h3 class="layui-timeline-title">{$vo['update_time']}</h3>
+                        <p>
+                            {$vo['content']}
+                        </p>
+                        <div class="img">
+                            {volist name="vo['img']" id="img"}
+                            <img src="{:get_image_location($img)}" alt="">
+                            {/volist}
+                        </div>
+
+                    </div>
+                </li>
+                {/volist}
+                
+                <li class="layui-timeline-item">
+                    <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                    <div class="layui-timeline-content layui-text">
+                        <div class="layui-timeline-title">过去</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+</div>
+{/block}
+
+
+{block name="slice-content-end"}
+{include file="common/footer"/}
+{/block}
+
+{block name="script"}
+<script>
+    $(function(){
+        var layer
+        layui.use(['layer','form','upload'],function(){
+            layer = layui.layer;
+            var form = layui.form;
+            var upload = layui.upload;
+
+            //监听提交
+            form.on('submit(formDemo)', function(data){
+                layer.confirm('是否提交退货申请',function(){
+                    $.post("{:url('reqGoodsBackAction')}",data.field,function(result){
+                        layer.msg(result.msg)
+                        if(result.code ==1) {
+                            setTimeout(function(){window.location.reload()},1000)
+                        }
+                    })
+                })
+                return false;
+            });
+
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#test1' //绑定元素
+                ,url: '{:url("upload/upload")}' //上传接口
+                ,data: {'route':'back_goods'}
+                ,acceptMime:'image/*'
+                ,done: function(res){
+                    //上传完毕回调
+                    //上传完毕回调
+                    layer.msg(res.msg)
+                    if(res.code == 1) {
+                        $("#back-goods-img").append('\n' +
+                            '                        <span>\n' +
+                            '                            <input type="hidden" name="img[]" value="'+res.data+'"/>' +
+                            '                            <i class="layui-icon layui-icon-close"></i>\n' +
+                            '                            <img src="/'+res.data+'"/>\n' +
+                            '                        </span>')
+                    }
+                }
+                ,error: function(){
+                    //请求异常回调
+                }
+            });
+        })
+
+        $("#back-goods-img").on('click','.layui-icon-close',function(){
+            $(this).parent().remove()
+        })
+        $(".order-back").click(function(){
+            var oid = $(this).data('oid')
+            var oid_l_id = $(this).data('oid_l_id')
+            layer.confirm("是否申请退货?",function(){
+                window.location.href = "{:url('UsersFlow/reqGoodBack',[],false,false)}/info/"+oid+'-'+oid_l_id
+            })
+        })
+    })
+</script>
+{/block}
+

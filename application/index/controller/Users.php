@@ -83,7 +83,6 @@ class Users extends Common
         $model = new \app\common\model\Order();
 
         $list = $model->with(['linkGoods','linkMerchant'])->where('uid',$this->user_id)->order('id','desc')->paginate(5);
-
         return view('order',[
             'list' =>$list,
             'page' => $list->render()
@@ -161,6 +160,27 @@ class Users extends Common
         $model = new \app\common\model\Order();
         list($bool,$msg) = $model->receive($id,$this->user_id);
         return ['code'=>(int)$bool,'msg'=>$msg];
+    }
+    /*
+     * 订单退货
+     * */
+    public function orderBack()
+    {
+        $id = $this->request->param('order_id',0,'intval');
+        try{
+
+            $model = new \app\common\model\Order();
+            $model_info = $model->back($id, $this->user_id);
+        }catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
+
+
+
+        return view('orderBack',[
+            'model' =>$model_info,
+        ]);
+
     }
 
     /*

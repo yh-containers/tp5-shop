@@ -1,0 +1,90 @@
+{extend name="./users/base"/}
+<!--背景色-->
+{block name="slice-content-start"}
+{include file="common/header"/}
+{/block}
+
+{block name="slice-content-main"}
+<!--广告块-->
+<div class="layui-main layui-main-width main-content detail-header-body">
+    <div class="layui-card">
+        <div class="layui-card-header card-header ">订单号:{$model['no']}</div>
+        <div class="layui-card-body ">
+
+            <div class="item-block">
+                <div class="item">
+                    <div class="c-l">订单状态：</div>
+                    <div class="c-r">{:$model?implode(',',$model['order_status_info']):''}</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-card">
+        <div class="layui-card-header card-header ">订单商品清单</div>
+        <div class="layui-card-body ">
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                <tr>
+                    <td width="180">商品信息</td>
+                    <td width="120">价格</td>
+                    <td width="120">数量</td>
+                    <td width="120">退货</td>
+                </tr>
+                </thead>
+                <tbody>
+                {volist name="model['link_goods']" id="vo"}
+                <tr>
+                    <td>
+                        <div class="goods-info">
+                            <img src="{:get_image_location($vo['g_img'])}" alt="">
+                            <div class="info">
+                                <div class="name">
+                                    <a href="{:url('goods/detail',['id'=>$vo['gid'],'attr_id'=>$vo['attr_id']])}"> {$vo['g_name']}</a>
+                                </div>
+                                <div class="attr"> {$vo['g_attr']}</div>
+                            </div>
+                        </div>
+
+                    </td>
+                    <td>￥{$vo['g_price']}</td>
+                    <td>{$vo['g_number']}</td>
+                    <td>
+                        <a class="layui-btn layui-btn-sm layui-btn-danger order-back" data-oid="{$model['id']}" data-oid_l_id="{$vo['id']}"  href="javascript:;" >申请退货</a>
+                    </td>
+                </tr>
+                {/volist}
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+{/block}
+
+
+{block name="slice-content-end"}
+{include file="common/footer"/}
+{/block}
+
+{block name="script"}
+<script>
+    $(function(){
+        var layer
+        layui.use(['layer'],function(){
+            layer = layui.layer;
+        })
+        $(".order-back").click(function(){
+            var oid = $(this).data('oid')
+            var oid_l_id = $(this).data('oid_l_id')
+            layer.confirm("是否申请退货?",function(){
+                window.location.href = "{:url('UsersFlow/reqGoodBack',[],false,false)}/info/"+oid+'-'+oid_l_id
+            })
+        })
+    })
+</script>
+{/block}
+
