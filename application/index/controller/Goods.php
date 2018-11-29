@@ -169,7 +169,6 @@ class Goods extends Common
         $model = new \app\common\model\UserInvoice();
         $model_invoice = $model->where('uid',$this->user_id)->find();
 
-
         return view('order',[
             'number'        => $number,
             'total_money'   => $total_money,

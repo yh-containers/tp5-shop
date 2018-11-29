@@ -44,5 +44,15 @@ class Index extends Common
         return response()->content($qrCode->writeString())->header(['Content-Type'=>$qrCode->getContentType()]);
     }
 
+    /*
+     * 登录处理
+     * */
+    public function login()
+    {
+        return view('login',[
+            'redirect_url'  => urlencode(url('index',false,true))
+        ]);
+
+    }
 
 }

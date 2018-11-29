@@ -23,8 +23,12 @@
                     </a>
                 </div>
                 <div class="user-opt-btn">
-                    <a class="login">登录</a>
-                    <a class="reg">注册</a>
+                    {if(app('container_user_id'))}
+                    您已登录,{:app('container_user_id')}
+                    {else/}
+                    <a href="{:url('index/login')}" class="login">登录</a>
+                    <a class="reg" onclick="alert('敬请期待')">注册</a>
+                    {/if}
                 </div>
                 <div class="chip">
                     <a href="#">

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{block name="title"}商城{/block}</title>
+    <link rel="stylesheet" href="/static/layui-v2.4.5/css/layui.css">
+    <link rel="stylesheet" href="/static/web/css/reset.css">
+    <link rel="stylesheet" href="/static/web/css/index.css">
+</head>
+{block name="style"}
+{/block}
+<body class="  {block name='bg_color_class'}{/block}">
+
+{block name="content"}{/block}
+
+<!--分块处理-->
+{block name="slice-content-start"}{/block}
+{block name="slice-content-main"}{/block}
+{block name="slice-content-end"}{/block}
+
+
+<!-- 你的HTML代码 -->
+<script src="/static/web/js/jquery-3.3.1.min.js"></script>
+<script src="/static/web/js/common.js"></script>
+<script src="/static/layui-v2.4.5/layui.js"></script>
+{block name="script"}{/block}
+</body>
+</html>

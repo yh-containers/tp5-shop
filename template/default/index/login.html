@@ -1,0 +1,89 @@
+{extend name="base"/}
+{block name="title"}用户登录{/block}
+{block name="style"}
+<style>
+    html,body{width: 100%;height: 100%}
+    .login-page {display:flex;flex-direction: column;justify-content: space-between;height: inherit;width: 1200px; margin: 0 auto;}
+    .login-page .top {height: 120px}
+    .login-page .foot {height: 120px}
+    .login-page .main {flex: 1}
+
+    .login-page .top a{}
+    .login-page .top a img{ width: 120px;height: 120px;}
+    .login-page .top .logo .tip:before{ content:"|";color:#ccc;padding:15px;font-size: 35px}
+    .login-page .top .logo .tip{ font-size: 24px;line-height: 46px;padding-left: 15px}
+
+    .login-page .main{display: flex;justify-content: space-between;align-items: center;min-height: 350px}
+    .login-page .main .login-block{width: 500px;height: 330px; border: 1px solid #ccc}
+    .login-page .main .login-block .column{display: flex;padding: 20px}
+    .login-page .main .login-block .column .name{width: 120px;text-align: right ;margin-right: 8px;font-size: 16px}
+    .login-page .main .login-block .column input{flex: 1;padding: 8px}
+    .login-page .main .login-block .column input[type="submit"]{border: none;background: #d43a48;font-size: 18px;color:#fff}
+    .login-page .main .login-block .column input[type="submit"]:hover{cursor:pointer}
+    .login-page .main .login-block .column ul{}
+    .login-page .main .login-block .column ul li{display: inline-block;border: 1px solid #ccc;border-radius: 50%;}
+    .login-page .main .login-block .column ul li a{text-decoration: none;display: inline-block}
+    .login-page .main .login-block .column ul li a img{width: 35px; height: 35px}
+
+
+    .login-page .foot .content{display: flex;flex-direction: column; align-items: center}
+    .login-page .foot .content ul{margin-bottom: 10px}
+    .login-page .foot .content ul li{display:inline-block;margin-right: 12px; }
+    .login-page .foot .content ul li a{text-decoration: none;font-size: 14px;color: black ;}
+    .login-page .foot .content ul li a:after{content:"|";color:#ccc;padding-left:1.5rem;}
+</style>
+{/block}
+{block name="content"}
+   <div class="login-page">
+       <div class="top">
+           <div class="logo">
+               <a href="#"><img src="/static/images/logo.png" alt=""></a>
+               <span class="tip">欢迎登录</span>
+           </div>
+
+       </div>
+       <div class="main">
+           <div class="show">
+               show
+           </div>
+           <div class="login-block">
+                <div class="column">
+                    <span class="name">用户名:</span>
+                    <input>
+                </div>
+                <div class="column">
+                    <span class="name">密码:</span>
+                    <input>
+                </div>
+                <div class="column">
+                    <span class="name"></span>
+                    <input type="submit" value="登录" id="submit" onclick="alert('请使用第三方授权登录')">
+                </div>
+                <div class="column">
+                    <span class="name">授权登录</span>
+                    <ul>
+                        <li><a href="http://pro.zyshop.com/auth.php/login?appid=123&redirect_url={$redirect_url}"><img src="/static/images/logo.png" alt=""></a></li>
+                    </ul>
+                </div>
+           </div>
+       </div>
+       <div class="foot">
+        <div class="content">
+            <ul>
+                <li><a href="###">xxxxxx</a></li>
+                <li><a href="###">xxxxxx</a></li>
+                <li><a href="###">xxxxxx</a></li>
+                <li><a href="###">xxxxxx</a></li>
+            </ul>
+            <div class="copy-right">copyright</div>
+        </div>
+       </div>
+   </div>
+{/block}
+{block name="script"}
+<script>
+    $(function(){
+
+    })
+</script>
+{/block}

@@ -14,7 +14,7 @@ class OrderCreate extends Validate
 
     protected $message  =   [
         'addr_id.require'   => '请选择收货地址',
-        'addr_id.gt'        => '收货地址异常',
+        'addr_id.gt'        => '请选择收货地址',
         'pay_id.require'    => '请选择支付方式',
         'pay_id.gt'         => '支付方式异常',
         'goods_info'         => '订单商品信息异常',

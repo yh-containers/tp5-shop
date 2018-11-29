@@ -29,14 +29,14 @@
                     <label class="layui-form-label">{$item['name']}</label>
                     <div class="layui-input-block">
                         {if($item['type']=='text')}
-                        <input type="text" name="{$item['field']}" placeholder="{$item['name']}" value="{$model_obj->getData($item['field'])}" class="layui-input">
+                        <input type="text" name="{$item['field']}" placeholder="{$item['name']}" value="{$model_obj[$item['field']]}" class="layui-input">
                         {elseif($item['type']=='file')/}
-                        <input type="hidden" name="{$item['field']}" value="{$model_obj->getData($item['field'])}"/>
+                        <input type="hidden" name="{$item['field']}" value="{$model_obj[$item['field']]}"/>
                         <button type="button" class="layui-btn" id="test1">
                             <i class="layui-icon">&#xe67c;</i>上传图片
                         </button>
-                        <a href="{:get_image_location($model_obj->getData($item['field']))}" target="_blank">
-                            <img src="{:get_image_location($model_obj->getData($item['field']))}" width="80px" height="30px"/>
+                        <a href="{:get_image_location($model_obj[$item['field']])}" target="_blank">
+                            <img src="{:get_image_location($model_obj[$item['field']])}" width="80px" height="30px"/>
                         </a>
                         {/if}
                     </div>
