@@ -35,9 +35,9 @@
                         <option value="{$vo['id']}" {:$model['cid']==$vo['id']?'selected':''}>{$vo['name']}</option>
 
                             {volist name="vo['link_data']" id="ch"}
-                            <option value="{$ch['id']}" {:$model['cid']==$ch['id']?'selected':''}>&nbsp;&nbsp;{$ch['name']}</option>
+                            <option value="{:$vo['id'].','.$ch['id']}" {:$model['cid']==($vo['id'].','.$ch['id'])?'selected':''}>&nbsp;&nbsp;{$ch['name']}</option>
                                 {volist name="ch['link_data']" id="chch"}
-                                <option value="{$chch['id']}" {:$model['cid']==$chch['id']?'selected':''}>&nbsp;&nbsp;&nbsp;&nbsp;{$chch['name']}</option>
+                                <option value="{:$vo['id'].','.$ch['id'].','.$chch['id']}" {:$model['cid']==($vo['id'].','.$ch['id'].','.$chch['id'])?'selected':''}>&nbsp;&nbsp;&nbsp;&nbsp;{$chch['name']}</option>
                                 {/volist}
                             {/volist}
 

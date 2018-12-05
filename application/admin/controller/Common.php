@@ -11,7 +11,7 @@ class Common extends Controller
 
     //是否开启多商户状态
     protected $open_mch_state;
-    protected $mch_id = 1;//商户信息
+    protected $mch_id = 0;//商户信息
 
     protected $master;
 

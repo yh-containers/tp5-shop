@@ -145,5 +145,8 @@ return [
     'show_error_msg'         => false,
     // 异常处理handle类 留空使用 \think\exception\Handle
     'exception_handle'       => '',
-
+    //图片域名
+    'file_domain'           =>  'http://127.0.0.1:8082',
+    //网站域名
+    'web_domain'            =>  'http://127.0.0.1:8082',
 ];

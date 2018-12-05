@@ -1,0 +1,65 @@
+{extend name="base"/}
+<!--上级栏目-->
+{block name="slider_bar"}ad-flowimages{/block}
+<!--面包屑-->
+{block name="breadcrumb"}
+<i class="ace-icon fa fa-home fa-users"></i>
+<li>广告管理</li>
+<li>轮播图设置</li>
+{/block}
+
+
+{block name="content"}
+
+
+<!-- div.table-responsive -->
+
+<!-- div.dataTables_borderWrap -->
+<div class="dataTables_wrapper form-inline no-footer">
+    <div class="row">
+        <div class="col-xs-6">
+            <a href="{:url('flowImagesAdd')}" class="btn btn-sm btn-primary" type="button">添加</a>
+        </div>
+        <div class="col-xs-5 text-right">
+
+        </div>
+        <div class="col-xs-1">
+
+        </div>
+    </div>
+    <table id="dynamic-table" class="table table-striped table-bordered table-hover">
+        <thead>
+        <tr>
+            <th width="80">序号</th>
+            <th width="120">标题</th>
+            <th width="120">图片</th>
+            <th width="120">状态</th>
+            <th width="120">更新时间</th>
+            <th width="80">操作</th>
+        </tr>
+        </thead>
+
+        <tbody>
+            {volist name="list" id="vo"}
+            <tr>
+                <td>{$i}</td>
+                <td>{$vo['name']}</td>
+                <td><img src=" {:get_image_location($vo['img'])}" width="120" height="80"/></td>
+                <td>{:$vo::$fields_status[$vo['status']]}</td>
+                <td>{$vo['update_time']}</td>
+                <td>
+                    <a href="{:url('flowImagesAdd',['id'=>$vo['id']])}">编辑</a>
+                    <a href="javascript:;" onclick="$.common.del(this,'{:url('flowImagesDel')}',{'id':{:$vo['id']},'type':1})" data-id="{$vo['id']}">删除</a>
+
+                </td>
+            </tr>
+            {/volist}
+        </tbody>
+    </table>
+</div>
+{$page|raw}
+{/block}
+
+{block name="script"}
+
+{/block}

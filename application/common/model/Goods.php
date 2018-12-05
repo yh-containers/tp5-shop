@@ -532,6 +532,81 @@ class Goods extends BaseModel
         return array_values($list);
     }
 
+    /*
+     * 获取商品数据
+     * */
+    public function detail($id)
+    {
+        $goods_info = $this
+            ->with(['linkAttr.linkModelAttr','linkPrice'=>function($query){
+                $query->hidden(['gid']);
+            },'linkGoodsModel'])
+            ->where('id','=',$id)
+            ->find();
+        $sku = $spu = $goods_stock = $goods_attr =[];
+        //商品库存
+        $goods_info['link_price'] && $goods_stock = $goods_info['link_price'];
+        //商品属性
+        $goods_info['link_attr'] && $goods_info['link_attr']->each(function($item,$index) use(&$goods_attr,&$spu,$goods_info){
+            $opt_item = $item->toArray();
+            $goods_attr[$opt_item['id']]=$opt_item;
+
+            $spu_key = $opt_item['link_model_attr']['key'];
+
+            $spu_item='';//spu对应属性
+            $opt_item['val'] && $spu_item = [
+                'name'=>$opt_item['link_model_attr']['name'],
+                'value'=>$opt_item['val'],
+            ];
+            if(array_key_exists($spu_key,$spu)){
+                !empty($spu_item) && $spu[$spu_key]['data'][]=[
+                    'name'=>$opt_item['link_model_attr']['name'],
+                    'value'=>$opt_item['val'],
+                ];
+            }elseif(!$opt_item['link_model_attr']['cate']){
+                $attr_info = explode(PHP_EOL,$goods_info['link_goods_model']['attr']);
+
+                $spu_item && isset($attr_info[$spu_key]) && $spu[$spu_key]=[
+                    'name'  =>  $attr_info[$spu_key],
+                    'data'  =>  [$spu_item]
+                ];
+            }
+
+
+        });
+
+        $attr_info = [];
+        foreach ($goods_stock as $vo) {
+            $attr_info = array_merge($attr_info,$vo['attr_info']);
+        }
+        $attr_info = array_unique($attr_info);
+//        dump($attr_info);exit;
+        foreach ($attr_info as $ai) {
+            if(isset($goods_attr[$ai])) {
+                $a_id = $goods_attr[$ai]['aid'];//属性id
+                if(array_key_exists($a_id,$sku)){
+                    $sku[$a_id]['data'][] = [
+                        'id'    => $ai,
+                        'name'  => $goods_attr[$ai]['val']
+                    ];
+                }else{
+                    $sku[$a_id] = [
+                        'name'  => $goods_attr[$ai]['link_model_attr']['name'],
+                        'data'  => [[
+                            'id'    => $ai,
+                            'name'  => $goods_attr[$ai]['val']
+                        ]]
+                    ];
+                }
+            }
+        }
+
+
+        $sku = array_values($sku);
+        unset($goods_info['link_attr']);
+
+        return [$goods_info,$sku,$spu];
+    }
 
 
     //关联商品价格属性--一个属性
@@ -567,6 +642,11 @@ class Goods extends BaseModel
     public function linkGoodsCart()
     {
         return $this->hasOne('GoodsCart','gid');
+    }
+    //关联商品模型
+    public function linkGoodsModel()
+    {
+        return $this->belongsTo('GoodsModel','mid');
     }
 
 }

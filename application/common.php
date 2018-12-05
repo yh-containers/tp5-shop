@@ -70,12 +70,12 @@ function c_lang_check($name, $key = '')
 
 
 //获取图片
-function get_image_location($img='')
+function get_image_location($img='',$domain=false)
 {
     if(preg_match('/^https?/',$img)){
         return $img;
     }else{
-        return DIRECTORY_SEPARATOR.$img;
+        return ($domain?app()->config('file_domain'):'').DIRECTORY_SEPARATOR.$img;
     }
 //    return $img;
 }
