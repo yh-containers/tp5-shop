@@ -84,6 +84,42 @@
                     layer.msg('upload error')
                 }
             });
+        },
+        upload_multi_img: function (upload, elem, func) {//多图上传
+            console.log($.fn.upload_obj);
+            //执行实例
+            var uploadInst = upload.render({
+                elem: elem //绑定元素
+                , url: $.fn.upload_obj.url
+                , accept: $.fn.upload_obj.accept
+                , acceptMime: $.fn.upload_obj.acceptMime
+                , multiple: $.fn.upload_obj.multiple
+                , number: $.fn.upload_obj.number
+                , done: function (res) {
+                    if($.fn.upload_obj.done){
+                        $.fn.upload_obj.done(res)
+                    }else {
+                        //上传完毕回调
+                        // console.log(res)
+                        //文件上传成功
+                        layer.msg(res.msg)
+                        if(res.code == 1) {
+                            var item = this.item;
+                            func(item,res)
+                            // var item = this.item;
+                            // //第一个图添加隐藏图片地址
+                            // $(item).parent().find('input:eq(0)').val(res.data)
+                            //
+                            // $(item).parent().find('img').attr('src','/'+res.data)
+                        }
+
+                    }
+                }
+                , error: function () {
+                    //请求异常回调
+                    layer.msg('upload error')
+                }
+            });
         }
     }
 })(jQuery)

@@ -12,9 +12,18 @@ class Goods extends BaseModel
     use SoftDelete,TMch;
 
 
-
     protected $name = 's_goods';
-
+    /*
+     * 图片问题-设置
+     * */
+    public function setImgsAttr($value){
+        return $value?implode(',',$value):'';
+    }/*
+     * 图片问题-设置
+     * */
+    public function getImgsAttr($value,$data){
+        return $value?explode(',',$value):[];
+    }
 
     //添加商品
     public function actionAdd($input_data, Validate $validate = null)
@@ -603,6 +612,7 @@ class Goods extends BaseModel
 
 
         $sku = array_values($sku);
+        $spu = array_values($spu);
         unset($goods_info['link_attr']);
 
         return [$goods_info,$sku,$spu];

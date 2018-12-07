@@ -70,14 +70,25 @@ function c_lang_check($name, $key = '')
 
 
 //获取图片
-function get_image_location($img='',$domain=false)
+function get_image_location($img,$domain=false)
 {
-    if(preg_match('/^https?/',$img)){
-        return $img;
+    if(is_array($img)){
+        foreach($img as &$vo){
+            if(preg_match('/^https?/',$vo)){
+
+            }else{
+                $vo= ($domain?app()->config('file_domain'):'').DIRECTORY_SEPARATOR.$vo;
+            }
+        }
     }else{
-        return ($domain?app()->config('file_domain'):'').DIRECTORY_SEPARATOR.$img;
+        if(preg_match('/^https?/',$img)){
+
+        }else{
+            $img= ($domain?app()->config('file_domain'):'').DIRECTORY_SEPARATOR.$img;
+        }
     }
-//    return $img;
+
+    return $img;
 }
 
 

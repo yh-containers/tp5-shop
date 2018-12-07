@@ -9,7 +9,8 @@ class Goods extends Validate
         'cid'        =>  'require|gt:0',
         'name'       =>  'require|max:150',
         'cover_img'  =>  'require',
-        'mid'       =>  'require',
+        'imgs'       =>  'require',
+        'mid'        =>  'require',
         'sku'        =>  'require|checkSkuInfo'
     ];
 
@@ -17,6 +18,7 @@ class Goods extends Validate
         'cid.require'   => '{%e_goods_cid_req}',
         'cid.gt'        => '{%e_goods_cid_gt}',
 
+        'imgs.require'  => '请上传商品多图',
         'name.require'  => '{%e_goods_name_req}',
         'name.max'      => '{%e_goods_name_max}',
         'cover_img.require'     => '{%e_goods_cover_img_req}',
@@ -25,7 +27,7 @@ class Goods extends Validate
     ];
 
     protected $scene = [
-        'admin_add' => ['cid','name','cover_img','e_goods_mid','sku'],
+        'admin_add' => ['cid','name','cover_img','e_goods_mid','sku','imgs'],
     ];
 
     public function checkSkuInfo($value,$rule,$data,$field,$intro)

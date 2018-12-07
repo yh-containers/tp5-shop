@@ -75,8 +75,10 @@ class Goods extends Common
         list($goods_info,$sku,$spu) = $model->detail($id);
         $goods_info = empty($goods_info)?[]:$goods_info->toArray();
         //商品基础数据字段
-        $base_data = ['id'=>0,'mch_id'=>0,'name'=>'','subtitle'=>'','cover_img'=>'','view'=>0,'status'=>0,'intro'=>'','content'=>''];
+        $base_data = ['id'=>0,'mch_id'=>0,'name'=>'','subtitle'=>'','imgs'=>[],'view'=>0,'status'=>0,'intro'=>'','content'=>''];
         $data = empty($goods_info)?$base_data:array_intersect_key($goods_info,$base_data);
+        //处理图片
+        $data['imgs']=get_image_location($data['imgs'],true);
 
         $data['price_info'] = empty($goods_info['link_price'])?[]:$goods_info['link_price'];
         $data['sku'] = $sku;    //商品sku
