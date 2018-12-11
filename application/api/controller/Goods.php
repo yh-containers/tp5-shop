@@ -83,6 +83,10 @@ class Goods extends Common
         $data['price_info'] = empty($goods_info['link_price'])?[]:$goods_info['link_price'];
         $data['sku'] = $sku;    //商品sku
         $data['spu'] = $spu;    //商品spu
-        return ['code'=>0,'msg'=>'获取成功','data'=>$data];
+        //是否收藏
+        $data['is_coll'] = $this->user_id?(model('UserGoodsColl')->where(['uid'=>$this->user_id,'gid'=>$id])->find()?1:0):0;
+        //购物车数量
+        $data['cart_num'] = !$this->user_id?0:model('GoodsCart')->where(['uid'=>$this->user_id])->sum('num');
+        return jsonOut(['获取成功',0,$data]);
     }
 }

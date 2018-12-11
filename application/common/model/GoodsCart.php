@@ -41,11 +41,11 @@ class GoodsCart extends BaseModel
      * @param $attr_id int sku id
      * @param $num int 数量
      * */
-    public function addCart($gid,$attr_id,$num=1)
+    public function addCart($user_id,$gid,$attr_id,$num=1)
     {
         $where =  [
             ['gid','=',$gid],
-            ['uid','=',app('container_user_id')],
+            ['uid','=',$user_id],
             ['attr_id','=',$attr_id],
         ];
 //        dump($where);
@@ -70,14 +70,14 @@ class GoodsCart extends BaseModel
             $save =  [
                 'mch_id'=>$goods_info['mch_id'],
                 'gid'=>$gid,
-                'uid'=>app('container_user_id'),
+                'uid'=>$user_id,
                 'attr_id'=>$attr_id,
                 'num'=>$num,
             ];
             $this->save($save);
         }
 
-        return [true,''];
+        return [true,'已加入购物车'];
     }
 
 
