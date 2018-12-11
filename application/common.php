@@ -99,5 +99,71 @@ function generateQrCode()
 
     header('Content-Type: '.$qrCode->getContentType());
     echo $qrCode->writeString();
-
 }
+
+/*
+ * 过滤多余数据
+ * 请注意键名冲突
+ * */
+function filter_data($data,$need_fields,$mode=1)
+{
+    $result_data = [];
+    if ($mode==1) {
+
+    } elseif ($mode==2){
+        foreach ($data as $i_key=>$datum){
+            foreach ($need_fields as $key=>$vo) {
+                $handle_data = $datum[$key]?$datum[$key]:[];
+                if(is_object($handle_data)){
+                    $handle_data = $handle_data->toArray();
+                }
+                if(key($handle_data)===0){//说明$vo是一个二维数据
+                    foreach ($handle_data as $item){
+
+                        $result_data[$i_key][$key][] = handle_filter_arr($vo,$item);
+                    }
+//                    dump($result_data);exit;
+                }else{
+                    $result_data[$i_key][$key] = handle_filter_arr($vo, $handle_data);
+                }
+            }
+        }
+
+    }
+    return $result_data;
+}
+
+//处理数据
+function handle_filter_arr($filed_info, $handle_data)
+{
+    $data =$auto_data=[];
+    foreach ($filed_info as $fk=>$item) {
+        $is_change_img = false;
+        if(substr($fk,0,1)==='*'){
+            $change_key =$search_key = substr($fk,1);
+            $is_change_img= true;
+        }else{
+            $change_key =$search_key = $fk;
+        }
+        if(strpos($fk,'|')){
+            $arr = explode('|',$fk);
+            $search_key = $arr[0];
+            $change_key = $arr[1];
+        }
+        if(is_array($item)){
+            $auto_data = handle_filter_arr($item,$handle_data[$search_key]);
+        }else{
+            if($is_change_img){
+                $data[$change_key] = isset($handle_data[$search_key])?get_image_location($handle_data[$search_key],true):$item;
+            }else{
+                $data[$change_key] = isset($handle_data[$search_key])?$handle_data[$search_key]:$item;
+            }
+
+        }
+        $data = array_merge($data,$auto_data);
+    }
+    return $data;
+}
+
+
+

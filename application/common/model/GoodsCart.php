@@ -12,7 +12,7 @@ class GoodsCart extends BaseModel
     /*
      * 获取购物车信息
      * */
-    public function cartInfo()
+    public function cartInfo($user_id)
     {
         $attr_ids = [];
         $goods_model = new Goods();
@@ -22,7 +22,7 @@ class GoodsCart extends BaseModel
                 'linkOnePrice'=>function($query){ $query->where('linkOnePrice.id = linkGoodsCart.attr_id'); },
                 'linkMerchant'
             ],'left')
-            ->where('linkGoodsCart.uid','=',app('container_user_id'))
+            ->where('linkGoodsCart.uid','=',$user_id)
             ->select();
         if(empty($goods_list)) {
             return [];
@@ -80,6 +80,21 @@ class GoodsCart extends BaseModel
         return [true,'已加入购物车'];
     }
 
+    /*
+     * 购物车商品操作
+     * */
+    public function optNum($user_id,$id,$num)
+    {
+        return $this->save(['num'=>$num],['uid'=>$user_id,'id'=>$id]);
+    }
+
+    /*
+     * 购物车--删除
+     * */
+    public function optDel($user_id,$id)
+    {
+        return $this->where(['uid'=>$user_id])->whereIn('id',$id)->delete();
+    }
 
 
     //关联商品属性

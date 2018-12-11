@@ -25,7 +25,7 @@ class Goods extends Common
         //sku属性id
         $model = model('GoodsCart');
 
-        $cart_list = $model->cartInfo();
+        $cart_list = $model->cartInfo($this->user_id);
 
         return view('cart',[
             'cart_list' => $cart_list
