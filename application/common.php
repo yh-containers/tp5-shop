@@ -107,26 +107,38 @@ function generateQrCode()
  * */
 function filter_data($data,$need_fields,$mode=1)
 {
+    if(empty($data)){
+        return;
+    }
     $result_data = [];
     if ($mode==1) {
-
-    } elseif ($mode==2){
-        foreach ($data as $i_key=>$datum){
-            foreach ($need_fields as $key=>$vo) {
-                $handle_data = $datum[$key]?$datum[$key]:[];
+        foreach ($need_fields as $key=>$vo){
+            if(is_array($vo) && count($vo)>0){
+                $fields = $vo;
+                $handle_data = !empty($data[$key])?$data[$key]:[];
                 if(is_object($handle_data)){
                     $handle_data = $handle_data->toArray();
                 }
-                if(key($handle_data)===0){//说明$vo是一个二维数据
-                    foreach ($handle_data as $item){
-
-                        $result_data[$i_key][$key][] = handle_filter_arr($vo,$item);
-                    }
-//                    dump($result_data);exit;
-                }else{
-                    $result_data[$i_key][$key] = handle_filter_arr($vo, $handle_data);
-                }
+            } else{
+                $handle_data = $data;
+                $fields = [$key=>$vo];
             }
+
+
+            if(key($handle_data)===0){//说明$vo是一个二维数据
+
+                foreach ($handle_data as $item){
+                    $result_data[$key][] = handle_filter_arr($fields,$item);
+                }
+            }else{
+                $handel_result = handle_filter_arr($fields,$handle_data);
+                $result_data = array_merge($result_data,$handel_result);
+            }
+        }
+
+    } elseif ($mode==2){
+        foreach ($data as $i_key=>$datum){
+            $result_data[$i_key] = filter_data($datum,$need_fields,1);
         }
 
     }
@@ -150,7 +162,7 @@ function handle_filter_arr($filed_info, $handle_data)
             $search_key = $arr[0];
             $change_key = $arr[1];
         }
-        if(is_array($item)){
+        if(is_array($item) && count($item)>0){
             $auto_data = handle_filter_arr($item,$handle_data[$search_key]);
         }else{
             if($is_change_img){

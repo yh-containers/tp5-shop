@@ -8,7 +8,7 @@ class OrderCreate extends Validate
 {
     protected $rule = [
         'addr_id'  =>  'require|gt:0',
-        'pay_id'  =>  'require|gt:0',
+        'pay_id'  =>  'gt:0',
         'goods_info'  =>  'require|checkGoodsInfo',
     ];
 

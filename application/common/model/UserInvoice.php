@@ -10,7 +10,7 @@ class UserInvoice extends BaseModel
 
     public static $fields_type_info = [
         [
-            'name'  => '普通发票',
+            'name'  => '个人/明细',
             'info' => [
                 ['field'=>'inv_payee','name'=>'发票抬头','type'=>'text'],
                 ['field'=>'tax_code','name'=>'纳税人识别号','type'=>'text'],
@@ -74,6 +74,23 @@ class UserInvoice extends BaseModel
         }
     }
 
+
+    //获取发票信息
+    public function getAllInvoice($user_id)
+    {
+        $model_invoice = $this->where('uid',$user_id)->find();
+        $data = self::$fields_type_info;
+        foreach($data as &$vo){
+            foreach ($vo['info'] as &$info){
+                if($info['type']=='file'){
+                    $info['value'] = isset($model_invoice[$info['field']])?get_image_location($model_invoice[$info['field']],true):'';
+                }else{
+                    $info['value'] = isset($model_invoice[$info['field']])?$model_invoice[$info['field']]:'';
+                }
+            }
+        }
+        return $data;
+    }
 
 
 }

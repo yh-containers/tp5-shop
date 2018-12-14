@@ -11,66 +11,16 @@ class Order extends Common
 
         $invoice_type = $this->request->param('type',0,'intvao');
         $input_data = $this->request->post();
-        $validate = new \app\common\validate\OrderCreate();
-//        dump($input_data);exit;
         try{
-            if($validate && !$validate->check($input_data)){
-                abort(40000,$validate->getError());
-            }
-
-            //获取发票信息
-            $model_invoice = new \app\common\model\UserInvoice();
-            list($invoice_bool,$invoice_msg,$data_invoice) = $model_invoice->getInvoice($invoice_type, $input_data);
-            if($invoice_bool===false) {
-                abort(40000,$invoice_msg);
-            }
-
-            //地址数据
-            $model_addr = new \app\common\model\UserAddr();
-            $data_addr = $model_addr->find($input_data['addr_id']);
-
-
-            $goods_info = $input_data['goods_info'];
-            if(!is_array($goods_info)) {
-                $goods_info = json_decode($goods_info,true);
-            }
-            $orders = [];
-            foreach ($goods_info as $vo) {
-//                $mch_id = $vo['mch_id'];
-                //创建订单实例
-                $order_model = new \app\common\model\Order();
-
-                $goods_ids = array_column($vo['sku_info'],'gid');       //所有商品id
-                $goods_attr_id = array_column($vo['sku_info'],'attr_id'); //选择的属性
-                $goods_num = array_column($vo['sku_info'], 'num'); //购买数量
-
-
-                //处理商品信息--绑定数据
-                $order_model->data([
-                    'rec_name'  => $data_addr['rec_name'],
-                    'rec_phone'  => $data_addr['rec_phone'],
-                    'province'  => $data_addr['province'],
-                    'city'  => $data_addr['city'],
-                    'area'  => $data_addr['area'],
-                    'addr'  => $data_addr['addr'],
-                    'rec_code'  => $data_addr['code'],
-                    'uid' => $this->user_id,
-                    'pay_id' => $input_data['pay_id'],
-                    'invoice'=>$data_invoice,
-                    'remark'    => empty($input_data['remark'])?'':trim($input_data['remark']),
-                ]);
-
-                $order_model->createMerchantOrder($vo['mch_id'],$goods_ids,$goods_attr_id,$goods_num);
-                array_push($orders,$order_model->getKey());
-            }
-            $orders = implode('_',$orders);
+            $order_model = new \app\common\model\Order();
+            $order_id=$order_model->generatorOrder($this->user_id,$input_data,$invoice_type);
 
 
         }catch (\Exception $e) {
             $this->error($e->getMessage());
         }
 
-        $this->redirect('Order/pay',['order_id'=>$orders]);
+        $this->redirect('Order/pay',['order_id'=>$order_id]);
 
     }
 

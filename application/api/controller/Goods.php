@@ -15,7 +15,7 @@ class Goods extends Common
         $page = $this->request->param('page',0,'intval');
         $limit = $this->request->param('limit',4,'intval');
 
-        $model = model('goods');
+        $model = model('Goods');
         $fields = 'id,name,cover_img,view';
         $where[] = ['status','=',1];
 
@@ -75,7 +75,7 @@ class Goods extends Common
         list($goods_info,$sku,$spu) = $model->detail($id);
         $goods_info = empty($goods_info)?[]:$goods_info->toArray();
         //商品基础数据字段
-        $base_data = ['id'=>0,'mch_id'=>0,'name'=>'','subtitle'=>'','imgs'=>[],'view'=>0,'status'=>0,'intro'=>'','content'=>''];
+        $base_data = ['id'=>0,'mch_id'=>0,'name'=>'','subtitle'=>'','*imgs'=>[],'view'=>0,'status'=>0,'intro'=>'','content'=>''];
         $data = empty($goods_info)?$base_data:array_intersect_key($goods_info,$base_data);
         //处理图片
         $data['imgs']=get_image_location($data['imgs'],true);
@@ -88,5 +88,19 @@ class Goods extends Common
         //购物车数量
         $data['cart_num'] = !$this->user_id?0:model('GoodsCart')->where(['uid'=>$this->user_id])->sum('num');
         return jsonOut('获取成功',0,$data);
+    }
+
+
+    public function testData()
+    {
+         $data_fields = [
+             'id'=>0,'name'=>'','*imgs'=>[],'*cover_img'=>'','name'=>'',
+             'link_one_price'=>['id|mode_id'=>0,'attr_info'=>[],'price'=>0.00,'stock'=>0],
+             'link_attr'=>['id|link_attr_id'=>0,'aid|goods_attr_id'=>0,'val|attr_val'=>'','link_model_attr'=>['name'=>'','id|model_id'=>0]],
+         ];
+         $list = model('Goods')->with(['linkAttr.linkModelAttr','linkOnePrice'])->find();
+//         dump($list);exit;
+         $list = filter_data($list,$data_fields,1);
+         dump($list);exit;
     }
 }

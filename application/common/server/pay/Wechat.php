@@ -5,6 +5,7 @@ use think\Model;
 //引入微信官方库
 include_once __DIR__.'/../../../../vendor/wx/lib/WxPay.Api.php';
 include_once __DIR__.'/../../../../vendor/wx/example/notify.php';
+include_once __DIR__.'/../../../../vendor/wx/example/WxPay.JsApiPay.php';
 
 class Wechat implements IPay
 {
@@ -55,6 +56,13 @@ class Wechat implements IPay
 
             $pay_mode = 'unifiedOrder';
 
+        }elseif ($pay_way == 'JSAPI'){
+
+            $input = new \WxPayUnifiedOrder();
+            $input->SetTrade_type("JSAPI");
+            $input->SetBody($pay_info['body']);
+            $input->SetOpenid($model->getOpenid());
+            $pay_mode = 'unifiedOrder';
         }else {
             abort(40041,'支付方式不存在');
 
@@ -73,14 +81,21 @@ class Wechat implements IPay
         $input->SetGoods_tag($pay_info['tag']);
 
         $result = \WxPayApi::$pay_mode($this->config, $input);
-        if($result['result_code']=='SUCCESS' && $result['return_code']=='SUCCESS'){
+
+
+        if(isset($result['result_code']) && $result['result_code']=='SUCCESS' && $result['return_code']=='SUCCESS'){
             if($pay_way=='APP') {
                 $result = $this->handleAppPayResult($result);
             }
             return $result;
+        }elseif ($result['return_code']=='FAIL') {
+            abort(40042,'微信支付内部异常!:'.$result['return_msg']);
         }elseif ($result['result_code']=='FAIL') {
             abort(40042,'微信支付内部异常!:'.$result['err_code_des']);
         }
+
+
+
 
         abort(40042,'微信支付内部异常!:'.$result['return_msg']);
     }

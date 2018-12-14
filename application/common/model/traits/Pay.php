@@ -15,6 +15,7 @@ trait Pay{
 
     protected $body;
 
+    protected $open_id='';
 
     //获取订单信息
     public function getOrderInfo()
@@ -44,7 +45,7 @@ trait Pay{
         $order_info = isset($this->order_info[0])?$this->order_info[0] : [];
         empty($order_info) && abort(200,'订单信息异常');
         $this->order_no = $order_info[$this->getFieldOrderNo()];
-        $this->pay_id = $order_info[$this->getFieldPayId()];
+        $this->pay_id = $this->pay_id ? $this->pay_id: $order_info[$this->getFieldPayId()]; //支付方式
         $this->primary_keys = $order_info[$this->getPk()];
         $this->pay_money = $order_info[$this->getFieldOrderMoney()];
         $this->setOrderBody();
@@ -137,6 +138,18 @@ trait Pay{
         $this->pay_money=$pay_money;
     }
 
+
+    //获取用户openid
+    public function getOpenid()
+    {
+        return $this->open_id;
+    }
+
+    //设置用户openid
+    public function setOpenid($value)
+    {
+        $this->open_id = $value;
+    }
 
     //订单支付信息
     public function getPayData()

@@ -140,7 +140,7 @@
                     <ul  id="tabHeader"  lay-allowClose="true" lay-filter="demo" >
                         {volist name="fields_type_info" id="vo"}
                         <li class="layui-inline">
-                            <input type="radio" name="invoice-type" value="{$key}"  title="{$vo['name']}" {:empty($key)?'checked':''} />
+                            <input type="radio" name="invoice-type" value="invoice[{$key}]"  title="{$vo['name']}" {:empty($key)?'checked':''} />
                         </li>
                         {/volist}
                     </ul>
