@@ -55,7 +55,7 @@ class User extends Common
         $need_fields = [
             'merchant_info'=>['id'=>0,'uid|mch_id'=>0,'name'=>''],
             'list'=>[
-                'id'=>0,'mch_id'=>0,'bid'=>0,'name'=>'','*cover_img'=>'',
+                'id'=>0,'bid'=>0,'name'=>'','*cover_img'=>'',
                 'link_goods_cart'=>['id|cart_id'=>0,'attr_id'=>0,'num'=>0,'is_choose'=>0],
                 'link_one_price'=>['code|goods_code'=>'','bar_code'=>'','price'=>0,'stock'=>0,'attr_info_name'=>''],
                 ]
@@ -95,5 +95,78 @@ class User extends Common
 
         return jsonOut($bool?'操作成功':'操作异常',(int)$bool);
     }
+    /*
+     * 购物车--选中
+     * */
+    public function cartChoose()
+    {
+        $id = $this->request->param('id',0,'intval');
+        $state = $this->request->param('state',0,'intval');//0不选中 1全选 2全不选
 
+        $model = new \app\common\model\GoodsCart();
+        $model->checkBoxChoose($this->user_id,$id,$state);
+
+        return jsonOut('操作成功',1);
+    }
+
+    /*
+     * 收货地址
+     * */
+    public function address()
+    {
+        $model = new \app\common\model\UserAddr();
+
+        $fields = 'id,uid,rec_name,rec_phone,province,city,area,addr,is_default';
+        $list = $model->field($fields)->where('uid',$this->user_id)->order('is_default','desc')->order('id','desc')->select();
+
+        return jsonOut('获取成功',1,$list);
+    }
+    /*
+     * 收货地址---获取指定信息
+     * */
+    public function addressInfo()
+    {
+        $id = $this->request->param('id',0,'intval');
+        empty($id) && exception('请求参数异常:id',41001);
+
+        $model = new \app\common\model\UserAddr();
+
+        $fields = 'id,uid,rec_name,rec_phone,province,city,area,addr,is_default';
+        $where = [
+            'id' => $id,
+            'uid'=> $this->user_id
+        ];
+        $info = $model->field($fields)->where($where)->find();
+
+        return jsonOut('获取成功',1,$info);
+    }
+
+    /*
+     * 收货地址--新增/编辑
+     * */
+    public function addressOpt()
+    {
+        $id = $this->request->param('id');
+        $model = new \app\common\model\UserAddr();
+
+        $input_data = $this->request->param('','','trim');
+        $input_data['uid'] = $this->user_id;
+
+        $validate = new \app\common\validate\UserAddr();
+        $result = $model->actionAdd($input_data,$validate);
+
+        return jsonOut($result['msg'],$result['code']);
+    }
+
+    /*
+     * 收货地址--删除
+     * */
+    public function addressDel()
+    {
+        $id = $this->request->param('id');
+        $model = new \app\common\model\UserAddr();
+        $result = $model->actionDel(['id'=>$id,'uid'=>$this->user_id]);
+
+        return jsonOut($result['msg'],$result['code']);
+    }
 }

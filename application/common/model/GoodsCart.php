@@ -81,6 +81,23 @@ class GoodsCart extends BaseModel
     }
 
     /*
+     * 购物车选中效果
+     * @param $user_id int 用户id
+     * @param $id int|array 购物车主键id
+     * @param $state int 0不操作 1全选 2全取消
+     *
+     * */
+    public function checkBoxChoose($user_id,$id=0,$state=0)
+    {
+        $where[] = ['uid','=',$user_id];
+        if(!empty($id)) {
+            $where[] = ['id','in',$id];
+        }
+
+        return $this->where($where)->setField('is_choose',$state==1?1:0);
+    }
+
+    /*
      * 购物车商品操作
      * */
     public function optNum($user_id,$id,$num)

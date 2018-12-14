@@ -541,6 +541,36 @@ class Goods extends BaseModel
         return array_values($list);
     }
 
+
+    /*
+     * 获取订单商品预览--指定商品
+     * @param $goods_id int|array 商品id
+     * @param $attr_id int|array 属性id
+     * @param $goods_num array 购买数量 格式 商品id_属性id=>购买数量
+     * */
+    public function orderPreviewGoods($goods_id,$attr_id=0, array $goods_num)
+    {
+        $goods = $this->withJoin([
+            //关联库存信息
+            'linkOnePrice'=>function($query)use($attr_id){
+                $attr_id && $query->whereIn('linkOnePrice.id', $attr_id);
+            },
+            'linkMerchant'
+        ],'left')->whereIn('Goods.id',$goods_id)->select();
+
+//        print_r($goods);exit;
+        //获取商品数据--支付
+        list($number,$total_money,$pay_money,$dis_money,$freight_money) = $this->handlePayInfo($goods,$goods_num);
+        //拼接商品属性等信息
+        $this->handleFullGoodsInfo($goods);
+        //按店铺拆分商品信息
+        $data = $this->handleMerchantGoodsInfo($goods);
+        return [$data,$number,$total_money,$pay_money,$dis_money,$freight_money];
+    }
+
+
+
+
     /*
      * 获取商品数据
      * */
