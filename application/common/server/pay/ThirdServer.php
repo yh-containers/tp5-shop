@@ -124,6 +124,15 @@ class ThirdServer
     }
 
     /*
+     * 获取第三方服务对象
+     * */
+    public function getObject($third_id)
+    {
+        $this->_createServer($third_id);
+        return $this->third_server;
+    }
+
+    /*
      * 获取配置信息
      * */
     public function getConfig()

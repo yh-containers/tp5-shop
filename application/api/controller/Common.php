@@ -34,7 +34,8 @@ class Common
         if($this->is_need_auth===true){
             //当前动作
             $current_action = $this->request->action();
-            if(strpos($this->ignore_auth, $current_action)===false && empty($this->user_id)){
+            $ignore_auth = strtolower($this->ignore_auth);
+            if(strpos($ignore_auth, $current_action)===false && empty($this->user_id)){
                 exception('请先登录',-1);
             }
         }

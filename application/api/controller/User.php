@@ -169,4 +169,68 @@ class User extends Common
 
         return jsonOut($result['msg'],$result['code']);
     }
+
+    /*
+     * 订单列表
+     * */
+    public function orderList()
+    {
+        $type = $this->request->param('type',0,'intval');
+        $model = new \app\common\model\Order();
+
+        $where[] = ['uid','=',$this->user_id];
+        if($type==1){ //待付款
+
+            $where[] = ['pay_status','=',0];
+        } elseif($type==2){//待发货
+            $where[] = ['pay_status','=',1];
+            $where[] = ['is_send','=',0];
+        } elseif($type==3){//待收货
+            $where[] = ['is_send','=',1];
+        }
+
+        $list = $model->with(['linkGoods','linkMerchant'])
+            ->where($where)->order('id','desc')
+            ->paginate(5)
+            ->each(function($item,$index){
+                $item['order_opt_btn'] = $item->order_opt_btn;
+                $item['order_status_info'] = $item->order_status_info;
+            });
+        $need_fields = [
+            'id'=>0,'mch_id'=>0,'no'=>'','uid'=>'','pay_id'=>0,'total_num'=>0,'total_money'=>0.00,
+            'pay_money'=>0.00,'order_opt_btn'=>[],'order_status_info'=>[],
+            'link_goods'=>[
+                'id|goods_id'=>0,'g_name'=>'','g_price'=>0.00,'g_number'=>0,'*g_img'=>'','g_attr'=>'','total_price'=>0.00
+            ],
+            'link_merchant'=>[
+                'name|mch_name'=>''
+            ]
+        ];
+        $list = filter_data($list,$need_fields,2);
+        return jsonOut('获取成功',1,$list);
+    }
+
+
+    //详情
+    public function orderDetail()
+    {
+        $id = $this->request->param('id',0,'intval');
+        $order_model = new \app\common\model\Order();
+        $data = $order_model->with(['linkGoods'])->where('id','=',$id)->find();
+        if(!empty($data)){
+            $data->append(['order_opt_btn']);
+            $data->append(['order_status_info']);
+            //优惠券
+            $invoice = $data->getData('invoice');
+            $model_invoice = new \app\common\model\UserInvoice();
+            $invoice_type = $invoice?$invoice['type']:false;
+            $data_invoice = [];//发票信息
+            if($invoice_type!==false) {
+                $data_invoice = $model_invoice->getInvoiceInfo($invoice_type,$invoice);
+
+            }
+            $data['invoice']=$data_invoice;
+        }
+        return jsonOut('获取成功',1,$data);
+    }
 }

@@ -27,7 +27,7 @@ class Index extends Controller
         $redirect_url = $this->request->param('redirect_url','','urldecode');
         $name = $this->request->param('name');
         $password = $this->request->param('password');
-        $result = file_get_contents('http://app.uumhome.com/api.php/Public/login/username/'.$name.'/password/'.$password);
+        $result = go_curl('http://app.uumhome.com/api.php/Public/login/username/'.$name.'/password/'.$password);
         if(is_bool($result)){
             $this->error('授权接口异常!');
         }else{

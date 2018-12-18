@@ -54,7 +54,7 @@
                 <div>[{:$vo['province'].' '.$vo['city'].' '.$vo['area']}] {$vo['addr']} </div>
             </td>
             <td>
-                <div>{:c_lang($sys_master,'p_td_order_pay_way')}：{:lang($pay_way[$vo['pay_id']]['lang'])}</div>
+                <div>{:empty($pay_way[$vo['pay_id']])?'':$pay_way[$vo['pay_id']]['name']}</div>
                 <div>{:c_lang($sys_master,'p_td_order_total_money')}：{$vo['total_money']}</div>
                 <div>{:c_lang($sys_master,'p_td_order_dis_money')}：{$vo['dis_money']}</div>
                 <div>{:c_lang($sys_master,'p_td_order_pay_money')}：{$vo['pay_money']}</div>

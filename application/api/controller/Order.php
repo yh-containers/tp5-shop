@@ -3,6 +3,9 @@ namespace app\api\controller;
 
 class Order extends Common
 {
+    protected $is_need_auth=true;
+
+    protected $ignore_auth = 'orderPreview';
     /*
      * 订单确认
      * */
@@ -146,4 +149,6 @@ class Order extends Common
             return jsonOut($pay_mode.'支付信息异常'.$e->getMessage(),0);
         }
     }
+
+
 }

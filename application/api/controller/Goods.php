@@ -74,9 +74,10 @@ class Goods extends Common
         $model = model('Goods');
         list($goods_info,$sku,$spu) = $model->detail($id);
         $goods_info = empty($goods_info)?[]:$goods_info->toArray();
+//        dump($goods_info);exit;
         //商品基础数据字段
         $base_data = ['id'=>0,'mch_id'=>0,'name'=>'','subtitle'=>'','*imgs'=>[],'view'=>0,'status'=>0,'intro'=>'','content'=>''];
-        $data = empty($goods_info)?$base_data:array_intersect_key($goods_info,$base_data);
+        $data = filter_data($goods_info,$base_data);
         //处理图片
         $data['imgs']=get_image_location($data['imgs'],true);
 
@@ -99,7 +100,7 @@ class Goods extends Common
              'link_attr'=>['id|link_attr_id'=>0,'aid|goods_attr_id'=>0,'val|attr_val'=>'','link_model_attr'=>['name'=>'','id|model_id'=>0]],
          ];
          $list = model('Goods')->with(['linkAttr.linkModelAttr','linkOnePrice'])->find();
-//         dump($list);exit;
+         dump($list);exit;
          $list = filter_data($list,$data_fields,1);
          dump($list);exit;
     }

@@ -63,6 +63,12 @@ class Wechat implements IPay
             $input->SetBody($pay_info['body']);
             $input->SetOpenid($model->getOpenid());
             $pay_mode = 'unifiedOrder';
+        }elseif ($pay_way == 'MWEB'){
+
+            $input = new \WxPayUnifiedOrder();
+            $input->SetTrade_type("MWEB");
+            $input->SetBody($pay_info['body']);
+            $pay_mode = 'unifiedOrder';
         }else {
             abort(40041,'支付方式不存在');
 
@@ -207,6 +213,87 @@ class Wechat implements IPay
         $buff = trim($buff, "&");
         return $buff;
     }
+
+
+    /*
+     * 获取微信--accessToken
+     * 文档地址  https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140183
+     * */
+    public  function accessToken()
+    {
+        $cache_name = 'wechat_access_token';
+        $access_token = cache($cache_name);
+        if(!$access_token){
+            $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.$this->config->GetAppId().'&secret='.$this->config->GetAppSecret();
+            $result = file_get_contents($url);
+            $access_token = '';
+            if($result){
+                $info = json_decode($result,true);
+                if(isset($info['errcode'])){
+                    abort($info['errcode'],$info['errmsg']);
+                }else{
+                    $access_token = $info['access_token'];
+                    $expires_in = ($info['expires_in']-60);
+                    cache($cache_name,$access_token,$expires_in);
+                }
+            }
+        }
+
+        return $access_token;
+    }
+
+    /*
+     * 获取 jsapi_ticket
+     * */
+    public function ticket($access_token='')
+    {
+        empty($access_token) && $access_token = $this->accessToken();
+
+        $cache_name = 'wechat_jsapi_ticket';
+        $jsapi_ticket = cache($cache_name);
+        if(!$jsapi_ticket){
+            $url = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token='.$access_token.'&type=jsapi';
+            $result = file_get_contents($url);
+            $jsapi_ticket = '';
+            if($result){
+                $info = json_decode($result,true);
+                if(!empty($info['errcode'])){
+                    abort($info['errcode'],$info['errmsg']);
+                }else{
+                    $jsapi_ticket = $info['ticket'];
+                    $expires_in = ($info['expires_in']-60);
+                    cache($cache_name,$jsapi_ticket,$expires_in);
+                }
+            }
+        }
+        return $jsapi_ticket;
+    }
+
+    /*
+     * JS-SDK使用权限签名算法
+     * */
+    public function jssdkSign($url, $ticket='')
+    {
+        empty($ticket) && $ticket = $this->ticket();
+
+        $data = [
+            'noncestr'      => 'wx_jssdk_sign'.rand(10000,99999),
+            'jsapi_ticket'  => $ticket,
+            'timestamp'     => time(),
+            'url'           => $url,
+        ];
+        ksort($data);
+        $str = '';
+        foreach ($data as $key=>$vo){
+            $str = $key.'='.$vo.'&';
+        }
+        $str = substr($str,0,-1);
+        $sign =  sha1($str);
+        return array_merge($data, ['sign'=>$sign,'appId'=>$this->config->GetAppId()]);
+
+    }
+
+
 }
 
 
@@ -232,13 +319,13 @@ class WxPayConfig extends \WxPayConfigInterface
      */
     public function GetAppId()
     {
-//        return 'wx426b3015555a46be';
-        return $this->config['appid'];
+        return 'wx426b3015555a46be';
+//        return $this->config['appid'];
     }
     public function GetMerchantId()
     {
-//        return '1900009851';
-        return $this->config['mchid'];
+        return '1900009851';
+//        return $this->config['mchid'];
     }
 
     //=======【支付相关配置：支付成功回调地址/签名方式】===================================
@@ -294,13 +381,13 @@ class WxPayConfig extends \WxPayConfigInterface
      */
     public function GetKey()
     {
-//        return '8934e7d15453e97507ef794cf7b0519d';
-        return $this->config['key'];
+        return '8934e7d15453e97507ef794cf7b0519d';
+//        return $this->config['key'];
     }
     public function GetAppSecret()
     {
-//        return '7813490da6f1265e4901ffb80afaa36f';
-        return $this->config['appsecret'];
+        return '7813490da6f1265e4901ffb80afaa36f';
+//        return $this->config['appsecret'];
     }
 
 
